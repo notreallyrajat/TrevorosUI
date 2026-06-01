@@ -25,6 +25,7 @@ import { StockChartDrawer } from './components/StockChartDrawer'
 import { PositionsView } from './components/PositionsView'
 import { AiView } from './components/AiView'
 import { MentorshipView } from './components/MentorshipView'
+import { AuthPage } from './components/AuthPage'
 
 // Mock Initial Data
 const initialWatchlist = [
@@ -53,6 +54,21 @@ function App() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const [newStock, setNewStock] = useState({ name: '', symbol: '', price: '', change: '', pct: '' })
+
+  // ── Auth state ──────────────────────────────────────────────
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authUser, setAuthUser] = useState({ name: 'Marshall D.', email: 'marshall@trevoros.com' })
+
+  const handleAuthenticated = (name: string, email: string) => {
+    setAuthUser({ name, email })
+    setIsAuthenticated(true)
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    setActiveTab('Dashboard')
+    window.location.hash = '#dashboard'
+  }
 
   const [portfolio] = useState({
     todayPL: 2154.55,
@@ -223,6 +239,13 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* ── AUTH GATE ── */}
+      {!isAuthenticated && (
+        <AuthPage onAuthenticated={handleAuthenticated} />
+      )}
+
+      {/* ── MAIN APP (only when authenticated) ── */}
+      {isAuthenticated && (<>
       {/* HEADER */}
       <header className="app-header">
         <div className="header-left">
@@ -317,14 +340,14 @@ function App() {
               onClick={() => { setIsProfileMenuOpen(!isProfileMenuOpen); setIsNotificationsOpen(false) }}
               aria-label="Toggle profile menu"
             >
-              M
+              {authUser.name.charAt(0).toUpperCase()}
             </button>
 
             {isProfileMenuOpen && (
               <div className="dropdown-menu" id="profile-dropdown">
                 <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontWeight: 700, fontSize: '14px' }}>Marshall D.</span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>marshall@trevoros.com</span>
+                  <span style={{ fontWeight: 700, fontSize: '14px' }}>{authUser.name}</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{authUser.email}</span>
                 </div>
                 <a href="#portfolio" className="dropdown-item" onClick={() => setIsProfileMenuOpen(false)}>
                   <User size={16} /><span>My Profile</span>
@@ -337,9 +360,10 @@ function App() {
                   <span>{theme === 'light' ? 'Dark Theme' : 'Light Theme'}</span>
                 </div>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '4px 0' }} />
-                <a href="#logout" className="dropdown-item" style={{ color: 'var(--danger)' }} onClick={() => setIsProfileMenuOpen(false)}>
+                <div className="dropdown-item" style={{ color: 'var(--danger)', cursor: 'pointer' }}
+                  onClick={() => { setIsProfileMenuOpen(false); handleLogout() }}>
                   <LogOut size={16} /><span>Logout</span>
-                </a>
+                </div>
               </div>
             )}
           </div>
@@ -465,6 +489,7 @@ function App() {
           <Bot size={20} /><span>AI</span>
         </a>
       </nav>
+      </>)}
     </div>
   )
 }
