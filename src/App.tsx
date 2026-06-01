@@ -7,15 +7,26 @@ import {
   Sun,
   X,
   Settings,
-  LogOut
+  LogOut,
+  BarChart3,
+  Briefcase,
+  BookOpen,
+  Bot,
+  Layers,
+  GraduationCap,
 } from 'lucide-react'
 
 import { PortfolioView } from './components/PortfolioView'
+import { DashboardView } from './components/DashboardView'
 import { DisciplineReportView } from './components/DisciplineReportView'
 import { LearningCenterView } from './components/LearningCenterView'
-import { TradeView } from './components/TradeView'
+import type { NewPosition } from './components/StockChartDrawer'
+import { StockChartDrawer } from './components/StockChartDrawer'
+import { PositionsView } from './components/PositionsView'
+import { AiView } from './components/AiView'
+import { MentorshipView } from './components/MentorshipView'
 
-// Mock Initial Data matching reference image
+// Mock Initial Data
 const initialWatchlist = [
   { id: '1', name: 'NIFTY 50', type: 'INDEX', price: 23659.00, change: 41.00, pct: 0.17, up: true },
   { id: '2', name: 'INFY', type: 'STOCK', price: 1193.70, change: -3.20, pct: -0.27, up: false },
@@ -24,83 +35,129 @@ const initialWatchlist = [
   { id: '5', name: 'ONGC', type: 'STOCK', price: 298.30, change: 1.80, pct: 0.61, up: true },
 ]
 
+// Nav tabs config — Trade removed; chart opens from watchlist click
+const NAV_TABS = [
+  { id: 'Dashboard',  label: 'Dashboard',  hash: 'dashboard'  },
+  { id: 'Positions',  label: 'Positions',  hash: 'positions'  },
+  { id: 'Portfolio',  label: 'Portfolio',  hash: 'portfolio'  },
+  { id: 'Learn',      label: 'Learn',      hash: 'learn'      },
+  { id: 'Mentorship', label: 'Mentorship', hash: 'mentorship' },
+  { id: 'AI',         label: 'AI Copilot', hash: 'ai'         },
+]
+
 function App() {
-  // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
-
-  // Watchlist state
   const [watchlist, setWatchlist] = useState(initialWatchlist)
-
-  // Active navigation tab
   const [activeTab, setActiveTab] = useState('Dashboard')
-
-  // Modals & Menu Toggles
   const [isAddWatchlistOpen, setIsAddWatchlistOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-
-  // Input states for forms
   const [newStock, setNewStock] = useState({ name: '', symbol: '', price: '', change: '', pct: '' })
 
-  // Live portfolio states
-  const [portfolio, setPortfolio] = useState({
+  const [portfolio] = useState({
     todayPL: 2154.55,
     todayPLPct: 3.24,
     topHolding: 'XYZ',
-    totalInvestment: 200000,
+    totalInvestment: 20000000,
     totalProfit: 40000,
     totalLoss: 10000,
     netPL: 30000,
-    overallReturns: 230000
+    overallReturns: 20210450
   })
 
-  // User streak
   const [streak, setStreak] = useState(4)
   const [streakAnimating, setStreakAnimating] = useState(false)
 
-  // Notifications
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'TSLA hit your profit target of ₹245.30', time: '5m ago', read: false },
     { id: 2, text: 'You climbed to 6th place in Paid Stock challenge!', time: '15m ago', read: false },
     { id: 3, text: 'NIFTY 50 hit intraday high of 23,659.00', time: '1h ago', read: true },
   ])
 
+  // Positions state — shared between TradeView and PositionsView
+  const [positions, setPositions] = useState<Array<{
+    id: string;
+    symbol: string;
+    name: string;
+    avgPrice: number;
+    currentPrice: number;
+    qty: number;
+    type: 'BUY' | 'SELL';
+  }>>([
+    { id: '1', symbol: 'HDFC BANK', name: 'HDFC Bank Ltd.', avgPrice: 762.75, currentPrice: 759.50, qty: 25, type: 'BUY' },
+    { id: '2', symbol: 'INFY', name: 'Infosys Ltd.', avgPrice: 1196.90, currentPrice: 1193.70, qty: 10, type: 'BUY' },
+    { id: '3', symbol: 'ONGC', name: 'Oil & Natural Gas Corp.', avgPrice: 296.50, currentPrice: 298.30, qty: 100, type: 'BUY' },
+  ])
 
+  // Stock chart drawer state — opened by clicking any watchlist row
+  const [drawerStock, setDrawerStock] = useState<typeof initialWatchlist[0] | null>(null)
 
-  // Synchronize location hash with activeTab routing state
+  // Handle order placed from TradeView
+  const handleOrderPlaced = (newPos: NewPosition) => {
+    const created = {
+      id: Date.now().toString(),
+      symbol: newPos.symbol,
+      name: newPos.name,
+      avgPrice: newPos.avgPrice,
+      currentPrice: newPos.currentPrice,
+      qty: newPos.qty,
+      type: newPos.type,
+    }
+    setPositions((prev) => [...prev, created])
+    const notif = {
+      id: Date.now(),
+      text: `${newPos.type} order: ${newPos.qty} × ${newPos.name} @ ₹${newPos.avgPrice.toFixed(2)} added to Positions.`,
+      time: 'Just now',
+      read: false,
+    }
+    setNotifications((prev) => [notif, ...prev])
+  }
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('#notification-bell-btn') && !target.closest('#notifications-dropdown')) {
+        setIsNotificationsOpen(false)
+      }
+      if (!target.closest('#profile-avatar-btn') && !target.closest('#profile-dropdown')) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Hash routing
   useEffect(() => {
     const handleHash = () => {
-      const hash = window.location.hash || '#dashboard'
-      const page = hash.replace('#', '').toLowerCase()
-      if (page === 'portfolio' || page === 'profile') {
+      const hash = (window.location.hash || '#dashboard').replace('#', '').toLowerCase()
+      const found = NAV_TABS.find((t) => t.hash === hash)
+      if (found) {
+        setActiveTab(found.id)
+      } else if (hash === 'profile') {
         setActiveTab('Portfolio')
-      } else if (page === 'trade') {
-        setActiveTab('Trade')
-      } else if (page === 'learn') {
-        setActiveTab('Learn')
       } else {
         setActiveTab('Dashboard')
       }
     }
     window.addEventListener('hashchange', handleHash)
-    handleHash() // run once initially
+    handleHash()
     return () => window.removeEventListener('hashchange', handleHash)
   }, [])
 
-  // Simulate small real-time fluctuations in watchlist stock prices
+  // Live price simulation
   useEffect(() => {
     const priceInterval = setInterval(() => {
-      setWatchlist((prevWatchlist) => {
-        // Pick one random stock to update
-        const randomIndex = Math.floor(Math.random() * prevWatchlist.length)
-        return prevWatchlist.map((stock, idx) => {
+      setWatchlist((prev) => {
+        const randomIndex = Math.floor(Math.random() * prev.length)
+        return prev.map((stock, idx) => {
           if (idx === randomIndex) {
             const isUp = Math.random() > 0.45
             const percentChange = (Math.random() * 0.15) * (isUp ? 1 : -1)
             const oldPrice = stock.price
             const newPrice = Number((oldPrice * (1 + percentChange / 100)).toFixed(2))
             const delta = Number((newPrice - oldPrice).toFixed(2))
-
             return {
               ...stock,
               price: newPrice,
@@ -113,29 +170,18 @@ function App() {
         })
       })
     }, 3500)
-
     return () => clearInterval(priceInterval)
   }, [])
 
-  // Format countdown time helper
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}m ${secs.toString().padStart(2, '0')}s`
-  }
-
-  // Toggle application theme (Light/Dark)
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(nextTheme)
     document.documentElement.setAttribute('data-theme', nextTheme)
   }
 
-  // Streak click handler
   const handleStreakClick = () => {
     setStreakAnimating(true)
     setStreak((prev) => prev + 1)
-    // Add a notification too
     const newNotif = {
       id: Date.now(),
       text: `Streak increased to ${streak + 1} days! Keep trading to double your multipliers.`,
@@ -146,16 +192,17 @@ function App() {
     setTimeout(() => setStreakAnimating(false), 500)
   }
 
-  // Add stock to watchlist
   const handleAddStock = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newStock.name || !newStock.symbol || !newStock.price) return
-
     const priceNum = parseFloat(newStock.price)
     const changeNum = parseFloat(newStock.change || '0')
     const pctNum = parseFloat(newStock.pct || '0')
-
-    const created: typeof initialWatchlist[0] = {
+    if (isNaN(priceNum) || isNaN(changeNum) || isNaN(pctNum)) {
+      alert('Please enter valid numeric values for price and changes.')
+      return
+    }
+    const created = {
       id: Date.now().toString(),
       name: newStock.name,
       type: newStock.symbol.toUpperCase(),
@@ -164,22 +211,19 @@ function App() {
       pct: pctNum,
       up: pctNum >= 0
     }
-
     setWatchlist((prev) => [...prev, created])
     setNewStock({ name: '', symbol: '', price: '', change: '', pct: '' })
     setIsAddWatchlistOpen(false)
   }
 
+  const clearNotifications = () => setNotifications([])
 
-
-  // Clear all notifications
-  const clearNotifications = () => {
-    setNotifications([])
-  }
+  // Desktop nav tabs (first 5 visible, rest in overflow or shown)
+  const desktopTabs = NAV_TABS
 
   return (
     <div className="app-container">
-      {/* HEADER SECTION */}
+      {/* HEADER */}
       <header className="app-header">
         <div className="header-left">
           <a href="#" className="logo-container">
@@ -188,31 +232,28 @@ function App() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </span>
-            <span>Trevoros</span>
+            <span className="logo-text">Trevoros</span>
           </a>
 
           <nav className="app-nav" aria-label="Main Navigation">
-            {['Dashboard', 'Trade', 'Portfolio', 'Learn'].map((tab) => {
-              const isActive = activeTab === tab;
+            {desktopTabs.map((tab) => {
+              const isActive = activeTab === tab.id
               return (
                 <a
-                  key={tab}
-                  href={`#${tab.toLowerCase()}`}
-                  id={`nav-${tab.toLowerCase()}`}
+                  key={tab.id}
+                  href={`#${tab.hash}`}
                   className={`nav-link ${isActive ? 'active' : ''}`}
-                  onClick={() => {
-                    window.location.hash = `#${tab.toLowerCase()}`;
-                  }}
+                  onClick={() => { window.location.hash = `#${tab.hash}` }}
                 >
-                  {tab}
+                  {tab.label}
                 </a>
-              );
+              )
             })}
           </nav>
         </div>
 
         <div className="header-right">
-          {/* Active daily streak widget */}
+          {/* Streak */}
           <div
             id="streak-badge"
             className={`streak-badge ${streakAnimating ? 'shake-animation' : ''}`}
@@ -223,32 +264,23 @@ function App() {
             <span>{streak}</span>
           </div>
 
-          {/* Theme switcher */}
-          <button
-            id="theme-toggle-btn"
-            className="icon-btn"
-            onClick={toggleTheme}
-            aria-label="Toggle light and dark modes"
-          >
+          {/* Theme toggle */}
+          <button id="theme-toggle-btn" className="icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
           </button>
 
-          {/* Alert Notification bell */}
+          {/* Notifications */}
           <div style={{ position: 'relative' }}>
             <button
               id="notification-bell-btn"
               className="icon-btn"
-              onClick={() => {
-                setIsNotificationsOpen(!isNotificationsOpen)
-                setIsProfileMenuOpen(false)
-              }}
-              aria-label="Toggle notifications menu"
+              onClick={() => { setIsNotificationsOpen(!isNotificationsOpen); setIsProfileMenuOpen(false) }}
+              aria-label="Toggle notifications"
             >
               <Bell size={20} className={notifications.some(n => !n.read) ? 'shake-animation' : ''} />
               {notifications.some(n => !n.read) && <span className="notification-badge" />}
             </button>
 
-            {/* Notification dropdown */}
             {isNotificationsOpen && (
               <div className="dropdown-menu" id="notifications-dropdown">
                 <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -277,43 +309,36 @@ function App() {
             )}
           </div>
 
-          {/* User Profile Avatar */}
+          {/* Profile */}
           <div style={{ position: 'relative' }}>
             <button
               id="profile-avatar-btn"
               className="avatar-btn"
-              onClick={() => {
-                setIsProfileMenuOpen(!isProfileMenuOpen)
-                setIsNotificationsOpen(false)
-              }}
+              onClick={() => { setIsProfileMenuOpen(!isProfileMenuOpen); setIsNotificationsOpen(false) }}
               aria-label="Toggle profile menu"
             >
               M
             </button>
 
-            {/* Profile settings dropdown */}
             {isProfileMenuOpen && (
               <div className="dropdown-menu" id="profile-dropdown">
                 <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontWeight: 700, fontSize: '14px' }}>Marshall D.</span>
                   <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>marshall@trevoros.com</span>
                 </div>
-                <a href="#profile" className="dropdown-item" onClick={() => setIsProfileMenuOpen(false)}>
-                  <User size={16} />
-                  <span>My Profile</span>
+                <a href="#portfolio" className="dropdown-item" onClick={() => setIsProfileMenuOpen(false)}>
+                  <User size={16} /><span>My Profile</span>
                 </a>
                 <a href="#settings" className="dropdown-item" onClick={() => setIsProfileMenuOpen(false)}>
-                  <Settings size={16} />
-                  <span>Account Settings</span>
+                  <Settings size={16} /><span>Account Settings</span>
                 </a>
-                <div className="dropdown-item" onClick={() => { toggleTheme(); setIsProfileMenuOpen(false); }}>
+                <div className="dropdown-item" onClick={() => { toggleTheme(); setIsProfileMenuOpen(false) }}>
                   {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
                   <span>{theme === 'light' ? 'Dark Theme' : 'Light Theme'}</span>
                 </div>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '4px 0' }} />
                 <a href="#logout" className="dropdown-item" style={{ color: 'var(--danger)' }} onClick={() => setIsProfileMenuOpen(false)}>
-                  <LogOut size={16} />
-                  <span>Logout</span>
+                  <LogOut size={16} /><span>Logout</span>
                 </a>
               </div>
             )}
@@ -321,32 +346,56 @@ function App() {
         </div>
       </header>
 
+      {/* VIEWS */}
       {activeTab === 'Dashboard' && (
-        <DisciplineReportView />
+        <DashboardView
+          watchlist={watchlist}
+          onAddWatchlist={() => setIsAddWatchlistOpen(true)}
+          onStockClick={(s) => setDrawerStock(s)}
+          portfolioData={{
+            todayPL: portfolio.todayPL,
+            todayPLPct: portfolio.todayPLPct,
+            topHolding: portfolio.topHolding,
+            totalInvestment: portfolio.totalInvestment,
+            overallReturns: portfolio.overallReturns,
+          }}
+          onNavigate={(tab) => { window.location.hash = `#${tab.toLowerCase()}` }}
+        />
       )}
-
-      {activeTab === 'Learn' && (
-        <LearningCenterView />
+      {activeTab === 'Discipline' && (
+        <DisciplineReportView watchlist={watchlist} onAddWatchlist={() => setIsAddWatchlistOpen(true)} onStockClick={(s) => setDrawerStock(s)} />
       )}
-
+      {activeTab === 'Positions' && (
+        <PositionsView positions={positions} onPositionsChange={setPositions} />
+      )}
       {activeTab === 'Portfolio' && (
-        <PortfolioView 
+        <PortfolioView
           portfolioData={portfolio}
           onNavigate={(target) => {
-            if (target === 'Reports') {
-              window.location.hash = '#dashboard';
-            } else if (target === 'Learn') {
-              window.location.hash = '#learn';
-            }
+            if (target === 'Reports') window.location.hash = '#dashboard'
+            else if (target === 'Learn') window.location.hash = '#learn'
+          }}
+        />
+      )}
+      {activeTab === 'Learn' && (
+        <LearningCenterView watchlist={watchlist} onAddWatchlist={() => setIsAddWatchlistOpen(true)} onStockClick={(s) => setDrawerStock(s)} />
+      )}
+      {activeTab === 'Mentorship' && <MentorshipView />}
+      {activeTab === 'AI' && <AiView />}
+
+      {/* STOCK CHART DRAWER — opens when any watchlist row is clicked */}
+      {drawerStock && (
+        <StockChartDrawer
+          stock={drawerStock}
+          onClose={() => setDrawerStock(null)}
+          onOrderPlaced={(pos) => {
+            handleOrderPlaced(pos)
+            setDrawerStock(null)
           }}
         />
       )}
 
-      {activeTab === 'Trade' && (
-        <TradeView />
-      )}
-
-      {/* MODAL - ADD STOCK TO WATCHLIST */}
+      {/* MODAL - ADD STOCK */}
       {isAddWatchlistOpen && (
         <div className="modal-overlay" onClick={() => setIsAddWatchlistOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} id="add-stock-modal">
@@ -356,93 +405,66 @@ function App() {
                 <X size={18} />
               </button>
             </div>
-
             <form onSubmit={handleAddStock}>
               <div className="modal-body">
                 <div className="form-group">
                   <label className="form-label" htmlFor="stock-name">Stock Name</label>
-                  <input
-                    id="stock-name"
-                    type="text"
-                    className="form-input"
-                    placeholder="e.g. Reliance Industries"
-                    value={newStock.name}
-                    onChange={(e) => setNewStock({ ...newStock, name: e.target.value })}
-                    required
-                  />
+                  <input id="stock-name" type="text" className="form-input" placeholder="e.g. Reliance Industries"
+                    value={newStock.name} onChange={(e) => setNewStock({ ...newStock, name: e.target.value })} required />
                 </div>
-
                 <div className="form-group">
                   <label className="form-label" htmlFor="stock-symbol">Symbol / Type</label>
-                  <input
-                    id="stock-symbol"
-                    type="text"
-                    className="form-input"
-                    placeholder="e.g. RELIANCE or NSE"
-                    value={newStock.symbol}
-                    onChange={(e) => setNewStock({ ...newStock, symbol: e.target.value })}
-                    required
-                  />
+                  <input id="stock-symbol" type="text" className="form-input" placeholder="e.g. RELIANCE or NSE"
+                    value={newStock.symbol} onChange={(e) => setNewStock({ ...newStock, symbol: e.target.value })} required />
                 </div>
-
                 <div className="form-group">
                   <label className="form-label" htmlFor="stock-price">Current Price (₹)</label>
-                  <input
-                    id="stock-price"
-                    type="number"
-                    step="0.01"
-                    className="form-input"
-                    placeholder="e.g. 2450.75"
-                    value={newStock.price}
-                    onChange={(e) => setNewStock({ ...newStock, price: e.target.value })}
-                    required
-                  />
+                  <input id="stock-price" type="number" step="0.01" className="form-input" placeholder="e.g. 2450.75"
+                    value={newStock.price} onChange={(e) => setNewStock({ ...newStock, price: e.target.value })} required />
                 </div>
-
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
                     <label className="form-label" htmlFor="stock-change">Change Amt</label>
-                    <input
-                      id="stock-change"
-                      type="number"
-                      step="0.01"
-                      className="form-input"
-                      placeholder="e.g. 15.40"
-                      value={newStock.change}
-                      onChange={(e) => setNewStock({ ...newStock, change: e.target.value })}
-                    />
+                    <input id="stock-change" type="number" step="0.01" className="form-input" placeholder="e.g. 15.40"
+                      value={newStock.change} onChange={(e) => setNewStock({ ...newStock, change: e.target.value })} />
                   </div>
-
                   <div className="form-group">
                     <label className="form-label" htmlFor="stock-pct">Change %</label>
-                    <input
-                      id="stock-pct"
-                      type="number"
-                      step="0.01"
-                      className="form-input"
-                      placeholder="e.g. 0.65"
-                      value={newStock.pct}
-                      onChange={(e) => setNewStock({ ...newStock, pct: e.target.value })}
-                    />
+                    <input id="stock-pct" type="number" step="0.01" className="form-input" placeholder="e.g. 0.65"
+                      value={newStock.pct} onChange={(e) => setNewStock({ ...newStock, pct: e.target.value })} />
                   </div>
                 </div>
               </div>
-
               <div className="modal-footer">
-                <button type="button" className="btn-secondary" onClick={() => setIsAddWatchlistOpen(false)}>
-                  Cancel
-                </button>
-                <button type="submit" id="submit-add-stock-btn" className="btn-primary">
-                  Add Stock
-                </button>
+                <button type="button" className="btn-secondary" onClick={() => setIsAddWatchlistOpen(false)}>Cancel</button>
+                <button type="submit" id="submit-add-stock-btn" className="btn-primary">Add Stock</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-
-
+      {/* MOBILE BOTTOM NAV */}
+      <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <a href="#dashboard" className={`mobile-nav-link ${activeTab === 'Dashboard' ? 'active' : ''}`} onClick={() => { window.location.hash = '#dashboard' }}>
+          <BarChart3 size={20} /><span>Dashboard</span>
+        </a>
+        <a href="#positions" className={`mobile-nav-link ${activeTab === 'Positions' ? 'active' : ''}`} onClick={() => { window.location.hash = '#positions' }}>
+          <Layers size={20} /><span>Positions</span>
+        </a>
+        <a href="#portfolio" className={`mobile-nav-link ${activeTab === 'Portfolio' ? 'active' : ''}`} onClick={() => { window.location.hash = '#portfolio' }}>
+          <Briefcase size={20} /><span>Portfolio</span>
+        </a>
+        <a href="#learn" className={`mobile-nav-link ${activeTab === 'Learn' ? 'active' : ''}`} onClick={() => { window.location.hash = '#learn' }}>
+          <BookOpen size={20} /><span>Learn</span>
+        </a>
+        <a href="#mentorship" className={`mobile-nav-link ${activeTab === 'Mentorship' ? 'active' : ''}`} onClick={() => { window.location.hash = '#mentorship' }}>
+          <GraduationCap size={20} /><span>Mentor</span>
+        </a>
+        <a href="#ai" className={`mobile-nav-link ${activeTab === 'AI' ? 'active' : ''}`} onClick={() => { window.location.hash = '#ai' }}>
+          <Bot size={20} /><span>AI</span>
+        </a>
+      </nav>
     </div>
   )
 }

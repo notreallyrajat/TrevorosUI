@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Search, Info } from 'lucide-react';
+import React from 'react';
+import { Info } from 'lucide-react';
+import { WatchlistSidebar } from './WatchlistSidebar';
 
 interface StockItem {
   id: string;
@@ -11,121 +12,18 @@ interface StockItem {
   up: boolean;
 }
 
-export const DisciplineReportView: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // Watchlist from reference image
-  const watchlist: StockItem[] = [
-    { id: '1', name: 'NIFTY 50', type: 'INDEX', price: 23659.00, change: 41.00, pct: 0.17, up: true },
-    { id: '2', name: 'INFY', type: 'STOCK', price: 1193.70, change: -3.20, pct: -0.27, up: false },
-    { id: '3', name: 'HDFC BANK', type: 'BSE', price: 759.50, change: -3.25, pct: -0.43, up: false },
-    { id: '4', name: 'TCS', type: 'BSE', price: 2327.15, change: -0.40, pct: -0.02, up: false },
-    { id: '5', name: 'ONGC', type: 'STOCK', price: 298.30, change: 1.80, pct: 0.61, up: true },
-  ];
+interface DisciplineReportViewProps {
+  watchlist: StockItem[];
+  onAddWatchlist?: () => void;
+  onStockClick?: (stock: StockItem) => void;
+}
 
-  // Top Indices
-  const indices = [
-    { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
-    { name: 'NIFTY 50', price: '₹ 158.34', change: '-3.82 (2.47%)', up: false },
-    { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
-    { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true }
-  ];
-
-  // Filtered watchlist
-  const filteredWatchlist = watchlist.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
+export const DisciplineReportView: React.FC<DisciplineReportViewProps> = ({ watchlist, onAddWatchlist, onStockClick }) => {
   return (
     <div className="discipline-report-container">
       {/* LEFT SIDEBAR: WATCHLIST & INDICES */}
       <aside className="discipline-sidebar-left">
-        {/* Watchlist Search */}
-        <div className="search-box-container">
-          <div className="search-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search watchlist items"
-            />
-            <span className="shortcut-badge">Ctrl+K</span>
-          </div>
-        </div>
-
-        {/* Watchlist Section Header */}
-        <div className="watchlist-header">
-          <span className="watchlist-title">Watchlist 1</span>
-          <button className="add-watchlist-btn">
-            + Add new
-          </button>
-        </div>
-
-        {/* Watchlist List */}
-        <div className="watchlist-list">
-          <div className="watchlist-group">
-            <div className="group-header">
-              <span className="group-name">Default</span>
-              <span className="group-count">({filteredWatchlist.length})</span>
-            </div>
-            <div className="group-items">
-              {filteredWatchlist.map((stock) => (
-                <div key={stock.id} className="watchlist-item">
-                  <div className="item-info">
-                    <span className="item-symbol">{stock.name}</span>
-                    <span className="item-exchange">{stock.type}</span>
-                  </div>
-                  <div className="item-price-col">
-                    <span className="item-price">{stock.price.toFixed(2)}</span>
-                    <span className={`item-change ${stock.up ? 'color-up' : 'color-down'}`}>
-                      {stock.change >= 0 ? '' : ''}
-                      {stock.change.toFixed(2)} ({stock.pct.toFixed(2)}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Watchlist Footer Summary */}
-        <div className="watchlist-footer-summary">
-          <span className="summary-lbl">NIFTY 50</span>
-          <span className="summary-val color-up">23659.00</span>
-          <span className="summary-change color-up">41.00 (0.17%)</span>
-          <span className="divider">|</span>
-          <span className="summary-lbl">SENSEX</span>
-          <span className="summary-val color-up">75318.39</span>
-          <span className="summary-change color-up">117.54 (0.16%)</span>
-        </div>
-
-        {/* Top Indices Header */}
-        <div className="watchlist-header" style={{ marginTop: '24px' }}>
-          <span className="watchlist-title">Top indices</span>
-        </div>
-
-        {/* Top Indices Grid */}
-        <div className="top-indices-grid">
-          {indices.map((index, idx) => (
-            <div key={idx} className="index-card">
-              <div className="index-card-header">
-                <span className="index-logo">N</span>
-                <span className="index-name">{index.name}</span>
-              </div>
-              <div className="index-card-body">
-                <div className="index-price">{index.price}</div>
-                <div className={`index-change ${index.up ? 'up' : 'down'}`}>
-                  {index.change}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <WatchlistSidebar watchlist={watchlist} onAddWatchlist={onAddWatchlist} onStockClick={onStockClick} />
       </aside>
 
       {/* RIGHT MAIN PANEL */}
