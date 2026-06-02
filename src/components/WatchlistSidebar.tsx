@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 
 interface StockItem {
@@ -23,6 +23,52 @@ const indices = [
   { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
   { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
 ];
+
+const WatchlistRow: React.FC<{
+  stock: StockItem;
+  onClick: () => void;
+}> = ({ stock, onClick }) => {
+  const [flash, setFlash] = useState<'up' | 'down' | null>(null);
+  const prevPriceRef = useRef(stock.price);
+
+  useEffect(() => {
+    if (stock.price !== prevPriceRef.current) {
+      const dir = stock.price > prevPriceRef.current ? 'up' : 'down';
+      setFlash(dir);
+      prevPriceRef.current = stock.price;
+
+      const timer = setTimeout(() => {
+        setFlash(null);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [stock.price]);
+
+  return (
+    <div
+      className={`wl-stock-row ${flash === 'up' ? 'flash-up' : flash === 'down' ? 'flash-down' : ''}`}
+      onClick={onClick}
+    >
+      {/* left: name + exchange type */}
+      <div className="wl-stock-left">
+        <span className="wl-stock-name">{stock.name}</span>
+        <span className="wl-stock-type">{stock.type}</span>
+      </div>
+      {/* right: change | pct | price — three columns matching screenshot */}
+      <div className="wl-stock-right">
+        <span className={`wl-change ${stock.up ? 'color-up' : 'color-down'}`}>
+          {stock.change.toFixed(2)}
+        </span>
+        <span className={`wl-pct ${stock.up ? 'color-up' : 'color-down'}`}>
+          {stock.pct.toFixed(2)}%
+        </span>
+        <span className={`wl-price ${stock.up ? 'color-up' : 'color-down'}`}>
+          {stock.price.toFixed(2)}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({ watchlist, onAddWatchlist, onStockClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,25 +114,7 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({ watchlist, o
           <div className="wl-empty">No items found</div>
         ) : (
           filtered.map((stock) => (
-            <div key={stock.id} className="wl-stock-row" onClick={() => onStockClick?.(stock)}>
-              {/* left: name + exchange type */}
-              <div className="wl-stock-left">
-                <span className="wl-stock-name">{stock.name}</span>
-                <span className="wl-stock-type">{stock.type}</span>
-              </div>
-              {/* right: change | pct | price — three columns matching screenshot */}
-              <div className="wl-stock-right">
-                <span className={`wl-change ${stock.up ? 'color-up' : 'color-down'}`}>
-                  {stock.change >= 0 ? '' : ''}{stock.change.toFixed(2)}
-                </span>
-                <span className={`wl-pct ${stock.up ? 'color-up' : 'color-down'}`}>
-                  {stock.pct.toFixed(2)}%
-                </span>
-                <span className={`wl-price ${stock.up ? 'color-up' : 'color-down'}`}>
-                  {stock.price.toFixed(2)}
-                </span>
-              </div>
-            </div>
+            <WatchlistRow key={stock.id} stock={stock} onClick={() => onStockClick?.(stock)} />
           ))
         )}
       </div>

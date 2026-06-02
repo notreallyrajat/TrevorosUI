@@ -24,7 +24,6 @@ import type { NewPosition } from './components/StockChartDrawer'
 import { StockChartDrawer } from './components/StockChartDrawer'
 import { PositionsView } from './components/PositionsView'
 import { AiView } from './components/AiView'
-import { MentorshipView } from './components/MentorshipView'
 import { AuthPage } from './components/AuthPage'
 
 // Mock Initial Data
@@ -40,9 +39,7 @@ const initialWatchlist = [
 const NAV_TABS = [
   { id: 'Dashboard',  label: 'Dashboard',  hash: 'dashboard'  },
   { id: 'Positions',  label: 'Positions',  hash: 'positions'  },
-  { id: 'Portfolio',  label: 'Portfolio',  hash: 'portfolio'  },
-  { id: 'Learn',      label: 'Learn',      hash: 'learn'      },
-  { id: 'Mentorship', label: 'Mentorship', hash: 'mentorship' },
+  { id: 'Learn',      label: 'Academy',    hash: 'learn'      },
   { id: 'AI',         label: 'AI Copilot', hash: 'ai'         },
 ]
 
@@ -151,8 +148,10 @@ function App() {
       const found = NAV_TABS.find((t) => t.hash === hash)
       if (found) {
         setActiveTab(found.id)
-      } else if (hash === 'profile') {
+      } else if (hash === 'profile' || hash === 'portfolio') {
         setActiveTab('Portfolio')
+      } else if (hash === 'mentorship') {
+        setActiveTab('Learn')
       } else {
         setActiveTab('Dashboard')
       }
@@ -404,7 +403,6 @@ function App() {
       {activeTab === 'Learn' && (
         <LearningCenterView watchlist={watchlist} onAddWatchlist={() => setIsAddWatchlistOpen(true)} onStockClick={(s) => setDrawerStock(s)} />
       )}
-      {activeTab === 'Mentorship' && <MentorshipView />}
       {activeTab === 'AI' && <AiView />}
 
       {/* STOCK CHART DRAWER — opens when any watchlist row is clicked */}
@@ -476,14 +474,8 @@ function App() {
         <a href="#positions" className={`mobile-nav-link ${activeTab === 'Positions' ? 'active' : ''}`} onClick={() => { window.location.hash = '#positions' }}>
           <Layers size={20} /><span>Positions</span>
         </a>
-        <a href="#portfolio" className={`mobile-nav-link ${activeTab === 'Portfolio' ? 'active' : ''}`} onClick={() => { window.location.hash = '#portfolio' }}>
-          <Briefcase size={20} /><span>Portfolio</span>
-        </a>
         <a href="#learn" className={`mobile-nav-link ${activeTab === 'Learn' ? 'active' : ''}`} onClick={() => { window.location.hash = '#learn' }}>
-          <BookOpen size={20} /><span>Learn</span>
-        </a>
-        <a href="#mentorship" className={`mobile-nav-link ${activeTab === 'Mentorship' ? 'active' : ''}`} onClick={() => { window.location.hash = '#mentorship' }}>
-          <GraduationCap size={20} /><span>Mentor</span>
+          <BookOpen size={20} /><span>Academy</span>
         </a>
         <a href="#ai" className={`mobile-nav-link ${activeTab === 'AI' ? 'active' : ''}`} onClick={() => { window.location.hash = '#ai' }}>
           <Bot size={20} /><span>AI</span>

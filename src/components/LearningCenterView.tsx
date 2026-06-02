@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen, Users, GraduationCap } from 'lucide-react';
 import { WatchlistSidebar } from './WatchlistSidebar';
 
 interface StockItem {
@@ -19,10 +19,10 @@ interface LearningCenterViewProps {
 }
 
 export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlist, onAddWatchlist, onStockClick }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'Assets' | 'Community'>('Assets');
+  const [activeSubTab, setActiveSubTab] = useState<'Assets' | 'Community' | 'Mentorship'>('Assets');
 
   return (
-    <div className="learning-center-container">
+    <div className="learning-center-container view-transition">
       {/* LEFT SIDEBAR: WATCHLIST & INDICES */}
       <aside className="learning-sidebar-left">
         <WatchlistSidebar watchlist={watchlist} onAddWatchlist={onAddWatchlist} onStockClick={onStockClick} />
@@ -32,8 +32,8 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlis
       <main className="learning-content-right">
         {/* Title Header */}
         <header className="learning-header">
-          <h1 className="learning-title">Learning Center</h1>
-          <p className="learning-subtitle">Upgrade your trading skills with professional courses and community insights.</p>
+          <h1 className="learning-title">Academy</h1>
+          <p className="learning-subtitle">Upgrade your trading skills with professional courses, community insights, and mentorship coaching.</p>
         </header>
 
         {/* Sub Navigation Tabs */}
@@ -52,9 +52,16 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlis
             <Users size={16} className="tab-icon-spacing" />
             <span>Community</span>
           </button>
+          <button 
+            className={`learning-tab-btn ${activeSubTab === 'Mentorship' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('Mentorship')}
+          >
+            <GraduationCap size={16} className="tab-icon-spacing" />
+            <span>Mentorship</span>
+          </button>
         </div>
 
-        {activeSubTab === 'Assets' ? (
+        {activeSubTab === 'Assets' && (
           <div className="learning-courses-grid">
             <div className="learning-course-card">
               <div className="course-image-placeholder">
@@ -123,9 +130,43 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlis
               </button>
             </div>
           </div>
-        ) : (
+        )}
+
+        {activeSubTab === 'Community' && (
           <div className="community-stubs-wrapper" style={{ padding: '24px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
             <p>Upgrade to Premium to unlock interactive community forums and expert trading circles.</p>
+          </div>
+        )}
+
+        {activeSubTab === 'Mentorship' && (
+          <div className="mentorship-coming-soon" style={{ padding: '24px 0', display: 'flex', justifyContent: 'center' }}>
+            <div className="mcs-card" style={{ width: '100%', maxWidth: '640px', margin: 0 }}>
+              <div className="mcs-emoji">🚀</div>
+              <h1 className="mcs-title">Coming Soon</h1>
+              <p className="mcs-subtitle">
+                Expert Mentorship Hub is under construction. We're hand-picking verified institutional
+                traders to guide you through your journey.
+              </p>
+              <div className="mcs-features">
+                <div className="mcs-feature-pill">📈 1-on-1 Coaching</div>
+                <div className="mcs-feature-pill">🎯 Live Sessions</div>
+                <div className="mcs-feature-pill">🏆 Verified Mentors</div>
+                <div className="mcs-feature-pill">⚡ Real-time Feedback</div>
+              </div>
+              <div className="mcs-notify-row">
+                <input
+                  type="email"
+                  className="mcs-email-input"
+                  placeholder="Enter your email for early access"
+                />
+                <button
+                  className="mcs-notify-btn"
+                  onClick={() => alert('You\'re on the list! We\'ll notify you when Mentorship goes live.')}
+                >
+                  Notify Me
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </main>

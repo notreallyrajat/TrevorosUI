@@ -47,7 +47,7 @@ export const PositionsView: React.FC<PositionsViewProps> = ({ positions, onPosit
   const totalPnLPct = totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0;
 
   return (
-    <div className="positions-view-container">
+    <div className="positions-view-container view-transition">
       {/* HEADER METRICS */}
       <header className="positions-metrics-header">
         <div className="pos-metric-card">

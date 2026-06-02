@@ -72,7 +72,7 @@ export const AiView: React.FC = () => {
   }, [messages, isTyping]);
 
   return (
-    <div className="ai-view-container">
+    <div className="ai-view-container view-transition">
       {/* LEFT SIDEBAR: SUGGESTIONS & CONTROLS */}
       <aside className="ai-sidebar">
         <div className="ai-sidebar-card">

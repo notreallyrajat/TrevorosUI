@@ -130,7 +130,7 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ portfolioData, onN
   };
 
   return (
-    <div className="portfolio-view-container">
+    <div className="portfolio-view-container view-transition">
       {/* SIDEBAR LEFT */}
       <aside className="portfolio-sidebar-left">
         {/* Profile Card */}

@@ -115,7 +115,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   portfolioData,
   onNavigate,
 }) => (
-  <div className="db-shell">
+  <div className="db-shell view-transition">
 
     {/* LEFT SIDEBAR */}
     <aside className="db-sidebar">
