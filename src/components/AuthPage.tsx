@@ -9,10 +9,10 @@ export const DEMO_NAME     = 'Marshall D.';
 // ── Decorative grid panel ─────────────────────────────────────
 const GridPanel: React.FC<{ variant: 'login' | 'signup' }> = ({ variant }) => {
   const isLogin  = variant === 'login';
-  const bgColor  = isLogin ? '#f5c518' : '#2563eb';   // yellow : blue
-  const gridColor= isLogin ? 'rgba(37,99,235,0.55)' : 'rgba(255,255,255,0.18)';
-  const shapeColor = isLogin ? '#2563eb' : '#f472b6';  // blue : pink
-  const textColor  = isLogin ? '#ffffff' : '#f9a8d4';  // white : light-pink
+  const bgColor  = '#080c14';
+  const gridColor= isLogin ? 'rgba(59, 130, 246, 0.12)' : 'rgba(139, 92, 246, 0.12)';
+  const shapeColor = isLogin ? '#3b82f6' : '#8b5cf6';
+  const textColor  = '#cbd5e1';
 
   return (
     <div className="auth-deco-panel" style={{ background: bgColor }}>
@@ -32,22 +32,22 @@ const GridPanel: React.FC<{ variant: 'login' | 'signup' }> = ({ variant }) => {
         {/* Top horizontal bar */}
         <path
           d="M 40 80 Q 200 80 380 80 L 380 160 Q 200 160 40 160 Z"
-          fill={shapeColor} opacity="0.9"
+          fill={shapeColor} opacity="0.08"
         />
         {/* Diagonal slash */}
         <path
           d="M 380 160 Q 260 240 200 300 Q 140 360 40 380 L 40 300 Q 140 280 200 220 Q 260 160 380 80 Z"
-          fill={shapeColor} opacity="0.85"
+          fill={shapeColor} opacity="0.06"
         />
         {/* Bottom horizontal bar */}
         <path
           d="M 40 380 Q 200 380 380 380 L 380 460 Q 200 460 40 460 Z"
-          fill={shapeColor} opacity="0.9"
+          fill={shapeColor} opacity="0.08"
         />
 
         {/* Soft glow blob */}
         <ellipse cx="200" cy="280" rx="160" ry="120"
-          fill={shapeColor} opacity="0.12" />
+          fill={shapeColor} opacity="0.04" />
       </svg>
 
       {/* Text overlay */}
@@ -136,6 +136,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onGoSignup }) => {
   return (
     <div className="auth-form-panel">
       <div className="auth-form-inner">
+        {/* Logo */}
+        <div className="auth-logo-row">
+          <span className="auth-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+              strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}>
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+          </span>
+          <span className="auth-logo-name">Trevoros</span>
+        </div>
+
         <h1 className="auth-title">Login</h1>
 
         <GoogleBtn label="Log in with Google" />
