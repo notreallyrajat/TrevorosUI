@@ -67,6 +67,16 @@ body {
   line-height: 1.5;
   transition: background-color 0.3s, color 0.3s;
   overflow-x: hidden;
+  zoom: 1.25;
+}
+
+/* Hide scrollbars globally while keeping scrollability */
+::-webkit-scrollbar {
+  display: none !important;
+}
+* {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
 }
 
 button, input, select {
@@ -1241,6 +1251,7 @@ button, input, select {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
 }
 
 .profile-card {
@@ -1380,6 +1391,7 @@ button, input, select {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
 }
 
 .portfolio-top-grid {
@@ -1405,6 +1417,12 @@ button, input, select {
 
 .portfolio-dashboard-card:hover {
   box-shadow: var(--shadow-md);
+}
+
+.support-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
 }
 
 .invested-header-row {
@@ -4134,6 +4152,43 @@ button, input, select {
     padding: 8px 10px;
     font-size: 11px;
   }
+  .support-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .profile-nav-menu {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .profile-nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 8px 4px !important;
+    border-radius: 8px !important;
+    min-height: 64px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .profile-nav-icon {
+    margin-right: 0 !important;
+    margin-bottom: 4px !important;
+  }
+  .profile-nav-label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  .profile-nav-arrow {
+    display: none !important;
+  }
 
   /* Trade View */
   .trade-view-three-col-container {
@@ -4265,6 +4320,14 @@ button, input, select {
   }
   .profile-name {
     font-size: 14px;
+  }
+  .profile-nav-menu {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important;
+  }
+  .profile-nav-label {
+    font-size: 10px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   /* Positions table: hide less important columns */
@@ -4758,8 +4821,19 @@ button, input, select {
   display: flex;
   flex-direction: column;
   gap: 0;
-  overflow-y: auto;
+  overflow-y: hidden;
   animation: slideFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scd-panel.maximized {
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  max-width: 100% !important;
+  top: 0;
+  bottom: 0;
+  border-left: none;
+  border-radius: 0;
 }
 
 @keyframes slideFromRight {
@@ -5019,7 +5093,7 @@ button, input, select {
 
 /* Responsive */
 @media (max-width: 540px) {
-  .scd-panel { width: 100vw; }
+  .scd-panel { left: 0 !important; right: 0 !important; width: auto !important; }
   .scd-header { padding: 16px 16px 12px 16px; }
   .scd-chart-wrap { padding: 12px 16px 6px 16px; }
   .scd-tf-row { padding: 8px 16px; }
@@ -5036,15 +5110,17 @@ button, input, select {
    ============================================================ */
 
 .scd-panel-tabs {
-  display: flex;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-card);
   flex-shrink: 0;
 }
 
 .scd-panel-tab {
-  flex: 1;
+  width: 100%;
+  text-align: center;
   padding: 11px 0;
   background: none;
   border: none;
@@ -5059,7 +5135,6 @@ button, input, select {
 
 .scd-panel-tab:hover {
   color: var(--text-primary);
-  background-color: var(--bg-page);
 }
 
 .scd-panel-tab.active {
@@ -6027,7 +6102,7 @@ button, input, select {
 
 /* Make the drawer panel tall enough */
 .scd-panel {
-  overflow-y: auto;
+  overflow-y: hidden !important;
 }
 
 .scd-chart-panel {

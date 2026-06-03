@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { 
   BarChart2, 
   BookOpen, 
@@ -24,10 +24,16 @@ interface PortfolioData {
 interface PortfolioViewProps {
   portfolioData: PortfolioData;
   onNavigate?: (tabId: string) => void;
+  activeSubTab: string;
+  setActiveSubTab: (tabId: string) => void;
 }
 
-export const PortfolioView: React.FC<PortfolioViewProps> = ({ portfolioData, onNavigate }) => {
-  const [activeSubTab, setActiveSubTab] = useState<string>('Reports');
+export const PortfolioView: React.FC<PortfolioViewProps> = ({ 
+  portfolioData, 
+  onNavigate,
+  activeSubTab,
+  setActiveSubTab
+}) => {
   const selectedYear = '2026';
 
   // Sidebar navigation items
@@ -434,7 +440,8 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ portfolioData, onN
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Mutual Funds & ETF Allocations</h2>
             <div className="portfolio-dashboard-card" style={{ padding: '0px', overflow: 'hidden' }}>
-              <table className="transactions-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="transactions-table-wrapper">
+                <table className="transactions-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
                     <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Fund / ETF Name</th>
@@ -468,6 +475,7 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ portfolioData, onN
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -475,7 +483,7 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ portfolioData, onN
         {activeSubTab === 'Support' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Customer Support Help Desk</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
+            <div className="support-grid">
               <div className="portfolio-dashboard-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: 700 }}>Submit a Support Ticket</h3>
                 <form onSubmit={(e) => { e.preventDefault(); alert('Support ticket submitted successfully!'); }}>

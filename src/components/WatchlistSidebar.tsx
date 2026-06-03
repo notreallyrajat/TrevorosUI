@@ -17,12 +17,7 @@ interface WatchlistSidebarProps {
   onStockClick?: (stock: StockItem) => void;
 }
 
-const indices = [
-  { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
-  { name: 'NIFTY 50', price: '₹ 158.34', change: '-3.82 (2.47%)', up: false },
-  { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
-  { name: 'NIFTY 50', price: '₹ 158.34', change: '+3.82 (2.47%)', up: true },
-];
+
 
 const WatchlistRow: React.FC<{
   stock: StockItem;
@@ -117,38 +112,6 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({ watchlist, o
             <WatchlistRow key={stock.id} stock={stock} onClick={() => onStockClick?.(stock)} />
           ))
         )}
-      </div>
-
-      {/* ── Footer ticker ── */}
-      <div className="wl-footer-ticker">
-        <span className="wl-ticker-label">NIFTY 50</span>
-        <span className="wl-ticker-val color-up">23659.00</span>
-        <span className="wl-ticker-chg color-up">41.00 (0.17%)</span>
-        <span className="wl-ticker-sep">|</span>
-        <span className="wl-ticker-label">SENSEX</span>
-        <span className="wl-ticker-val color-up">75318.39</span>
-        <span className="wl-ticker-chg color-up">117.54 (0.16%)</span>
-      </div>
-
-      {/* ── Top Indices header ── */}
-      <div className="wl-section-header" style={{ marginTop: '12px' }}>
-        <span className="wl-section-label">Top indices</span>
-      </div>
-
-      {/* ── Index cards 2×2 grid ── */}
-      <div className="wl-indices-grid">
-        {indices.map((idx, i) => (
-          <div key={i} className="wl-index-card">
-            <div className="wl-index-card-top">
-              <div className="wl-index-logo">N</div>
-              <span className="wl-index-name">{idx.name}</span>
-            </div>
-            <div className="wl-index-price">{idx.price}</div>
-            <span className={`wl-index-badge ${idx.up ? 'up' : 'down'}`}>
-              {idx.change}
-            </span>
-          </div>
-        ))}
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown, Maximize2, Minimize2 } from 'lucide-react';
 import { StockChart } from './StockChart';
 
 interface StockItem {
@@ -65,6 +65,7 @@ export const StockChartDrawer: React.FC<StockChartDrawerProps> = ({
   const [qty, setQty]         = useState(1);
   const [toast, setToast]     = useState<string | null>(null);
   const [activePanel, setActivePanel] = useState<'chart' | 'options'>('chart');
+  const [isMaximized, setIsMaximized] = useState(false);
 
   const isUp      = stock.up;
   const changeStr = `${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)} (${stock.pct.toFixed(2)}%)`;
@@ -91,7 +92,7 @@ export const StockChartDrawer: React.FC<StockChartDrawerProps> = ({
     <>
       <div className="scd-backdrop" onClick={onClose} aria-hidden="true" />
 
-      <aside className="scd-panel" role="dialog" aria-modal="true">
+      <aside className={`scd-panel ${isMaximized ? 'maximized' : ''}`} role="dialog" aria-modal="true">
 
         {/* Header */}
         <div className="scd-header">
@@ -102,7 +103,17 @@ export const StockChartDrawer: React.FC<StockChartDrawerProps> = ({
               <span className={`scd-change ${isUp ? 'color-up' : 'color-down'}`}>{changeStr} 1D</span>
             </div>
           </div>
-          <button className="scd-close-btn" onClick={onClose} aria-label="Close"><X size={18} /></button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              className="scd-close-btn"
+              onClick={() => setIsMaximized(!isMaximized)}
+              aria-label={isMaximized ? "Restore" : "Maximize"}
+              title={isMaximized ? "Restore Size" : "Take Over Whole Page"}
+            >
+              {isMaximized ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+            </button>
+            <button className="scd-close-btn" onClick={onClose} aria-label="Close"><X size={18} /></button>
+          </div>
         </div>
 
         {toast && <div className="scd-toast">{toast}</div>}
@@ -124,7 +135,7 @@ export const StockChartDrawer: React.FC<StockChartDrawerProps> = ({
                 key={stock.id}
                 stockName={stock.name}
                 theme={theme}
-                height={280}
+                height={isMaximized ? 480 : 280}
                 showVolume={true}
               />
             </div>

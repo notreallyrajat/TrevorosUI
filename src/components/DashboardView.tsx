@@ -73,8 +73,9 @@ const rankStyle = (rank: number, variant: 'free' | 'paid'): React.CSSProperties 
 };
 
 // ── Leaderboard card (one per variant, always visible) ────────
-const LeaderboardCard: React.FC<{ variant: 'free' | 'paid'; rows: typeof freeBoard }> = ({ variant, rows }) => (
+const LeaderboardCard: React.FC<{ variant: 'free' | 'paid'; rows: typeof freeBoard; title?: string }> = ({ variant, rows, title }) => (
   <div className="db-lb-card">
+    {title && <h2 className="db-card-heading" style={{ marginBottom: '14px' }}>{title}</h2>}
     {/* top row: pill + filter pill + timer */}
     <div className="db-lb-top-row">
       <div className="db-lb-top-left">
@@ -154,7 +155,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Top Gainers */}
       <div className="db-card">
         <div className="db-movers-hdr">
-          <h2 className="db-card-heading" style={{ marginBottom: 0 }}>Top Gainers</h2>
+          <h2 className="db-card-heading" style={{ marginBottom: 0 }}>Gainers</h2>
           <button className="db-view-all" onClick={() => onNavigate?.('Trade')}>View All</button>
         </div>
         <div className="db-movers-col-hdr">
@@ -177,7 +178,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Top Losers */}
       <div className="db-card">
         <div className="db-movers-hdr">
-          <h2 className="db-card-heading" style={{ marginBottom: 0 }}>Top Losers</h2>
+          <h2 className="db-card-heading" style={{ marginBottom: 0 }}>Losers</h2>
           <button className="db-view-all" onClick={() => onNavigate?.('Trade')}>View All</button>
         </div>
         <div className="db-movers-col-hdr">
@@ -201,8 +202,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
     {/* RIGHT PANEL */}
     <aside className="db-right">
-      <h2 className="db-card-heading">Leaderboard</h2>
-      <LeaderboardCard variant="free" rows={freeBoard} />
+      <LeaderboardCard variant="free" rows={freeBoard} title="Leaderboard" />
       <LeaderboardCard variant="paid" rows={paidBoard} />
       <button className="db-join-btn" onClick={() => alert('Redirecting to Challenges...')}>
         <Zap size={17} fill="currentColor" />

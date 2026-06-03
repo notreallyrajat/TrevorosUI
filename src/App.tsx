@@ -9,11 +9,9 @@ import {
   Settings,
   LogOut,
   BarChart3,
-  Briefcase,
   BookOpen,
   Bot,
   Layers,
-  GraduationCap,
 } from 'lucide-react'
 
 import { PortfolioView } from './components/PortfolioView'
@@ -47,6 +45,7 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [watchlist, setWatchlist] = useState(initialWatchlist)
   const [activeTab, setActiveTab] = useState('Dashboard')
+  const [portfolioSubTab, setPortfolioSubTab] = useState('Reports')
   const [isAddWatchlistOpen, setIsAddWatchlistOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
@@ -150,6 +149,19 @@ function App() {
         setActiveTab(found.id)
       } else if (hash === 'profile' || hash === 'portfolio') {
         setActiveTab('Portfolio')
+        setPortfolioSubTab('Reports')
+      } else if (hash === 'settings') {
+        setActiveTab('Portfolio')
+        setPortfolioSubTab('Settings')
+      } else if (hash === 'banks') {
+        setActiveTab('Portfolio')
+        setPortfolioSubTab('Banks')
+      } else if (hash === 'funds') {
+        setActiveTab('Portfolio')
+        setPortfolioSubTab('Funds')
+      } else if (hash === 'support') {
+        setActiveTab('Portfolio')
+        setPortfolioSubTab('Support')
       } else if (hash === 'mentorship') {
         setActiveTab('Learn')
       } else {
@@ -394,9 +406,15 @@ function App() {
       {activeTab === 'Portfolio' && (
         <PortfolioView
           portfolioData={portfolio}
+          activeSubTab={portfolioSubTab}
+          setActiveSubTab={setPortfolioSubTab}
           onNavigate={(target) => {
-            if (target === 'Reports') window.location.hash = '#dashboard'
+            if (target === 'Reports') window.location.hash = '#portfolio'
             else if (target === 'Learn') window.location.hash = '#learn'
+            else if (target === 'Settings') window.location.hash = '#settings'
+            else if (target === 'Banks') window.location.hash = '#banks'
+            else if (target === 'Funds') window.location.hash = '#funds'
+            else if (target === 'Support') window.location.hash = '#support'
           }}
         />
       )}
