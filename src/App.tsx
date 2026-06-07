@@ -22,6 +22,7 @@ import type { NewPosition } from './components/StockChartDrawer'
 import { StockChartDrawer } from './components/StockChartDrawer'
 import { PositionsView } from './components/PositionsView'
 import { AiView } from './components/AiView'
+import { ChallengeView } from './components/ChallengeView'
 import { AuthPage } from './components/AuthPage'
 
 // Mock Initial Data
@@ -38,6 +39,7 @@ const NAV_TABS = [
   { id: 'Dashboard',  label: 'Dashboard',  hash: 'dashboard'  },
   { id: 'Positions',  label: 'Positions',  hash: 'positions'  },
   { id: 'Learn',      label: 'Academy',    hash: 'learn'      },
+  { id: 'Challenge',  label: 'Challenge',  hash: 'challenge'  },
   { id: 'AI',         label: 'AI Copilot', hash: 'ai'         },
 ]
 
@@ -156,9 +158,12 @@ function App() {
       } else if (hash === 'banks') {
         setActiveTab('Portfolio')
         setPortfolioSubTab('Banks')
-      } else if (hash === 'funds') {
+      } else if (hash === 'analytics') {
         setActiveTab('Portfolio')
-        setPortfolioSubTab('Funds')
+        setPortfolioSubTab('Analytics')
+      } else if (hash === 'account') {
+        setActiveTab('Portfolio')
+        setPortfolioSubTab('Account')
       } else if (hash === 'support') {
         setActiveTab('Portfolio')
         setPortfolioSubTab('Support')
@@ -408,16 +413,19 @@ function App() {
           setActiveSubTab={setPortfolioSubTab}
           onNavigate={(target) => {
             if (target === 'Reports') window.location.hash = '#portfolio'
-            else if (target === 'Learn') window.location.hash = '#learn'
+            else if (target === 'Analytics') window.location.hash = '#analytics'
             else if (target === 'Settings') window.location.hash = '#settings'
             else if (target === 'Banks') window.location.hash = '#banks'
-            else if (target === 'Funds') window.location.hash = '#funds'
+            else if (target === 'Account') window.location.hash = '#account'
             else if (target === 'Support') window.location.hash = '#support'
           }}
         />
       )}
       {activeTab === 'Learn' && (
         <LearningCenterView watchlist={watchlist} onAddWatchlist={() => setIsAddWatchlistOpen(true)} onStockClick={(s) => setDrawerStock(s)} />
+      )}
+      {activeTab === 'Challenge' && (
+        <ChallengeView />
       )}
       {activeTab === 'AI' && <AiView />}
 

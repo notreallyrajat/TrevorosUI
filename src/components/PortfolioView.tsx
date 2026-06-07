@@ -2,14 +2,16 @@ import React, { useMemo } from 'react';
 import { 
   BarChart2, 
   Building2, 
-  Wallet, 
   Headphones, 
   Settings, 
   ChevronRight, 
   MapPin, 
   Trophy, 
   ArrowLeftRight,
-  ChevronDown
+  ChevronDown,
+  Activity,
+  User,
+  Info
 } from 'lucide-react';
 
 interface PortfolioData {
@@ -37,10 +39,11 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
 
   // Sidebar navigation items
   const sidebarItems = [
-    { id: 'Reports', label: 'Reports', icon: <BarChart2 size={18} /> },
+    { id: 'Reports', label: 'Reports / Portfolio', icon: <BarChart2 size={18} /> },
+    { id: 'Analytics', label: 'Behavioral Analytics', icon: <Activity size={18} /> },
     { id: 'Banks', label: 'Banks', icon: <Building2 size={18} /> },
-    { id: 'Funds', label: 'Funds', icon: <Wallet size={18} /> },
     { id: 'Support', label: 'Customer support', icon: <Headphones size={18} /> },
+    { id: 'Account', label: 'Account management', icon: <User size={18} /> },
     { id: 'Settings', label: 'Settings', icon: <Settings size={18} /> }
   ];
 
@@ -436,45 +439,214 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
           </div>
         )}
 
-        {activeSubTab === 'Funds' && (
+        {activeSubTab === 'Analytics' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Mutual Funds & ETF Allocations</h2>
-            <div className="portfolio-dashboard-card" style={{ padding: '0px', overflow: 'hidden' }}>
-              <div className="transactions-table-wrapper">
-                <table className="transactions-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
-                    <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Fund / ETF Name</th>
-                    <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Type</th>
-                    <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Invested Value</th>
-                    <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Current Value</th>
-                    <th style={{ padding: '12px 16px', fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Returns</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>Trevoros Alpha Growth Fund</td>
-                    <td style={{ padding: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>Mutual Fund (Direct)</td>
-                    <td style={{ padding: '16px', fontSize: '13px' }}>₹ 50,000.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>₹ 58,450.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 700, color: 'var(--success)' }}>+16.90%</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>NIFTY 50 Index ETF</td>
-                    <td style={{ padding: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>Exchange Traded Fund</td>
-                    <td style={{ padding: '16px', fontSize: '13px' }}>₹ 30,000.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>₹ 32,150.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 700, color: 'var(--success)' }}>+7.17%</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>SBI Small Cap Direct Fund</td>
-                    <td style={{ padding: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>Mutual Fund (Direct)</td>
-                    <td style={{ padding: '16px', fontSize: '13px' }}>₹ 20,000.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 600 }}>₹ 19,200.00</td>
-                    <td style={{ padding: '16px', fontSize: '13px', fontWeight: 700, color: 'var(--danger)' }}>-4.00%</td>
-                  </tr>
-                </tbody>
-              </table>
+            <header className="discipline-header" style={{ marginBottom: '4px' }}>
+              <h1 className="discipline-title" style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 4px 0' }}>Trader Discipline Report</h1>
+              <p className="discipline-subtitle" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>Behavioral Analysis & Risk Protocol Adherence</p>
+            </header>
+
+            <div className="discipline-grid">
+              {/* LEFT COLUMN */}
+              <div className="discipline-left-column" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Discipline Score Trend Card */}
+                <div className="discipline-card">
+                  <div className="card-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h3 className="card-title" style={{ margin: 0 }}>Discipline Score Trend</h3>
+                      <p className="card-subtitle" style={{ margin: '4px 0 0 0' }}>Last 5 Trading Sessions</p>
+                    </div>
+                    <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 600 }}>+2.1% Avg</span>
+                  </div>
+
+                  <div style={{ marginTop: '20px', height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg viewBox="0 0 500 200" width="100%" height="100%" style={{ overflow: 'visible' }}>
+                      <line x1="40" y1="20" x2="480" y2="20" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="40" y1="70" x2="480" y2="70" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="40" y1="120" x2="480" y2="120" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="40" y1="170" x2="480" y2="170" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="3 3" />
+
+                      <text x="25" y="24" fontSize="11" fill="var(--text-secondary)" textAnchor="end">100</text>
+                      <text x="25" y="74" fontSize="11" fill="var(--text-secondary)" textAnchor="end">95</text>
+                      <text x="25" y="124" fontSize="11" fill="var(--text-secondary)" textAnchor="end">90</text>
+                      <text x="25" y="174" fontSize="11" fill="var(--text-secondary)" textAnchor="end">85</text>
+
+                      <text x="60" y="190" fontSize="11" fill="var(--text-secondary)" textAnchor="middle">Session 1</text>
+                      <text x="160" y="190" fontSize="11" fill="var(--text-secondary)" textAnchor="middle">Session 2</text>
+                      <text x="260" y="190" fontSize="11" fill="var(--text-secondary)" textAnchor="middle">Session 3</text>
+                      <text x="360" y="190" fontSize="11" fill="var(--text-secondary)" textAnchor="middle">Session 4</text>
+                      <text x="460" y="190" fontSize="11" fill="var(--text-secondary)" textAnchor="middle">Session 5</text>
+
+                      <path d="M 60 60 L 160 140 L 260 20 L 360 70 L 460 50" fill="none" stroke="rgba(59, 130, 246, 0.25)" strokeWidth="2.5" />
+
+                      <circle cx="60" cy="60" r="5.5" fill="var(--bg-card)" stroke="#3b82f6" strokeWidth="3" />
+                      <circle cx="160" cy="140" r="5.5" fill="var(--bg-card)" stroke="#3b82f6" strokeWidth="3" />
+                      <circle cx="260" cy="20" r="5.5" fill="var(--bg-card)" stroke="#3b82f6" strokeWidth="3" />
+                      <circle cx="360" cy="70" r="5.5" fill="var(--bg-card)" stroke="#3b82f6" strokeWidth="3" />
+                      <circle cx="460" cy="50" r="5.5" fill="var(--bg-card)" stroke="#3b82f6" strokeWidth="3" />
+                    </svg>
+                  </div>
+
+                  <div className="discipline-notice-banner" style={{ display: 'flex', gap: '10px', backgroundColor: 'var(--bg-page)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '12px', marginTop: '16px' }}>
+                    <Info size={16} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                      Score variance remains within acceptable deviation limits. The dip in Session 2 correlates with higher market volatility, but risk controls remained intact. Recovery to 100 in Session 3 demonstrates strong adaptability.
+                    </span>
+                  </div>
+                </div>
+
+                {/* Behavioral Stability Index Card */}
+                <div className="discipline-card">
+                  <div className="card-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 className="card-title" style={{ margin: 0 }}>Behavioral Stability Index</h3>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '11px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-secondary)' }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3b82f6' }} />
+                        <span>Current Trader</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-secondary)' }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#94a3b8' }} />
+                        <span>Platform Benchmark</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '260px' }}>
+                    <svg viewBox="0 0 300 300" width="100%" height="100%" style={{ overflow: 'visible' }}>
+                      {/* Concentric pentagons guidelines */}
+                      <polygon points="150,50 245,119 209,231 91,231 55,119" fill="none" stroke="var(--border-color)" strokeWidth="1" />
+                      <polygon points="150,75 221,127 194,211 106,211 79,127" fill="none" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="2 2" />
+                      <polygon points="150,100 197,135 179,191 121,191 103,135" fill="none" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="2 2" />
+                      <polygon points="150,125 174,142 165,170 135,170 126,142" fill="none" stroke="var(--border-color)" strokeWidth="1" strokeDasharray="2 2" />
+
+                      {/* Axes lines */}
+                      <line x1="150" y1="150" x2="150" y2="50" stroke="var(--border-color)" strokeWidth="1" />
+                      <line x1="150" y1="150" x2="245" y2="119" stroke="var(--border-color)" strokeWidth="1" />
+                      <line x1="150" y1="150" x2="209" y2="231" stroke="var(--border-color)" strokeWidth="1" />
+                      <line x1="150" y1="150" x2="91" y2="231" stroke="var(--border-color)" strokeWidth="1" />
+                      <line x1="150" y1="150" x2="55" y2="119" stroke="var(--border-color)" strokeWidth="1" />
+
+                      {/* Axis labels */}
+                      <text x="150" y="32" fontSize="10" fontWeight="600" fill="var(--text-secondary)" textAnchor="middle">Risk Control</text>
+                      <text x="255" y="123" fontSize="10" fontWeight="600" fill="var(--text-secondary)" textAnchor="start">Emotional</text>
+                      <text x="215" y="245" fontSize="10" fontWeight="600" fill="var(--text-secondary)" textAnchor="start">SL Discipline</text>
+                      <text x="85" y="245" fontSize="10" fontWeight="600" fill="var(--text-secondary)" textAnchor="end">Overtrading Control</text>
+                      <text x="45" y="123" fontSize="10" fontWeight="600" fill="var(--text-secondary)" textAnchor="end">Participation</text>
+
+                      {/* Platform Benchmark Polygon */}
+                      <polygon points="150,70 221,127 197,215 100,219 74,125" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
+
+                      {/* Current Trader Polygon */}
+                      <polygon points="150,60 207,131 206,227 103,215 83,128" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" strokeWidth="2.5" />
+
+                      {/* Vertices dots for Current Trader */}
+                      <circle cx="150" cy="60" r="4" fill="#3b82f6" />
+                      <circle cx="207" cy="131" r="4" fill="#3b82f6" />
+                      <circle cx="206" cy="227" r="4" fill="#3b82f6" />
+                      <circle cx="103" cy="215" r="4" fill="#3b82f6" />
+                      <circle cx="83" cy="128" r="4" fill="#3b82f6" />
+                    </svg>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div className="discipline-right-column" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Violation Distribution Card */}
+                <div className="discipline-card">
+                  <div className="card-header-row">
+                    <h3 className="card-title" style={{ margin: 0 }}>Violation Distribution</h3>
+                  </div>
+
+                  <div style={{ margin: '20px 0', height: '140px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)' }}>
+                    {/* Low Bar */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50px', height: '100%', justifyContent: 'flex-end' }}>
+                      <div style={{ width: '100%', height: '40%', backgroundColor: '#3b82f6', borderRadius: '4px 4px 0 0' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px' }}>Low</span>
+                    </div>
+                    {/* Med Bar */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50px', height: '100%', justifyContent: 'flex-end' }}>
+                      <div style={{ width: '100%', height: '20%', backgroundColor: '#f59e0b', borderRadius: '4px 4px 0 0' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px' }}>Med</span>
+                    </div>
+                    {/* High Bar */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50px', height: '100%', justifyContent: 'flex-end' }}>
+                      <div style={{ width: '100%', height: '2%', backgroundColor: 'var(--border-color)', borderRadius: '2px' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px' }}>High</span>
+                    </div>
+                    {/* Critical Bar */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50px', height: '100%', justifyContent: 'flex-end' }}>
+                      <div style={{ width: '100%', height: '2%', backgroundColor: 'var(--border-color)', borderRadius: '2px' }} />
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px' }}>Critical</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--success)' }} />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--success)' }}>Excellent Adherence</span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.4' }}>
+                      Zero critical violations recorded. Minor formatting errors in trade logging (Low) and one minor deviation in entry timing (Medium).
+                    </p>
+                  </div>
+                </div>
+
+                {/* Market Participation Card */}
+                <div className="discipline-card">
+                  <div className="card-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 className="card-title" style={{ margin: 0 }}>Market Participation</h3>
+                    <span style={{ fontSize: '24px', fontWeight: 800, color: '#3b82f6' }}>40%</span>
+                  </div>
+
+                  <div className="participation-metrics">
+                    <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                      <strong>2</strong> / 5 Mandatory Days
+                    </div>
+                    <div style={{ height: '8px', backgroundColor: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden', margin: '12px 0 16px 0' }}>
+                      <div style={{ width: '40%', height: '100%', backgroundColor: '#3b82f6' }} />
+                    </div>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+                      Requires 3 more active trading days to complete evaluation phase.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSubTab === 'Account' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>Account Management</h2>
+            <div className="portfolio-dashboard-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>User Details</h3>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>View and update your personal info.</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '600px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Full Name</label>
+                    <input type="text" className="form-input" defaultValue="Manvendra singh rathore" style={{ width: '100%', padding: '8px' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Email Address</label>
+                    <input type="email" className="form-input" defaultValue="manvendra@trevoros.com" style={{ width: '100%', padding: '8px' }} />
+                  </div>
+                </div>
+                <button className="btn-primary" style={{ marginTop: '16px', padding: '8px 16px', fontSize: '12px' }} onClick={() => alert('Profile updated successfully!')}>Update Profile</button>
+              </div>
+              <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)' }} />
+              <div>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>System Actions</h3>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Reset your simulation environment or clear history databases.</p>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button className="btn-secondary" style={{ padding: '8px 16px', fontSize: '12px' }} onClick={() => alert('Simulated positions reset!')}>Reset Positions</button>
+                  <button className="btn-secondary" style={{ padding: '8px 16px', fontSize: '12px' }} onClick={() => alert('Watchlist restored to default!')}>Reset Watchlist</button>
+                </div>
               </div>
             </div>
           </div>
