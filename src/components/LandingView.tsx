@@ -70,17 +70,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onLoginClick }) => {
       {/* 1. Sleek Navigation Bar */}
       <header className="landing-navbar">
         <a href="/" className="landing-nav-brand">
-          {/* Custom Crafted Blue-Glowing Leaf/Flame SVG Logo matching your screenshot */}
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ filter: 'drop-shadow(0 0 10px rgba(96, 165, 250, 0.45))' }}>
-            <path d="M12 2C12 2 17 7.5 17 12C17 14.76 14.76 17 12 17C9.24 17 7 14.76 7 12C7 7.5 12 2 12 2Z" fill="url(#leaf-grad)" />
-            <path d="M12 6C12 6 15 10 15 13C15 14.66 13.66 16 12 16C10.34 16 9 14.66 9 13C9 10 12 6 12 6Z" fill="#ffffff" opacity="0.35" />
-            <defs>
-              <linearGradient id="leaf-grad" x1="12" y1="2" x2="12" y2="17" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#60a5fa" />
-                <stop offset="1" stopColor="#2563eb" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <span className="logo-icon" style={{ width: '32px', height: '32px', display: 'inline-block', marginRight: '6px' }}>
+            <img src="/logo.png" alt="Trevoros Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </span>
           <span style={{ fontFamily: 'Inter, sans-serif' }}>Trevoros</span>
         </a>
 
