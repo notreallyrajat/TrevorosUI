@@ -19,7 +19,7 @@ interface LearningCenterViewProps {
 }
 
 export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlist, onAddWatchlist, onStockClick }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'Assets' | 'Community' | 'Mentorship'>('Assets');
+  const [activeSubTab, setActiveSubTab] = useState<'Learn' | 'Community' | 'Mentorship'>('Learn');
 
   return (
     <div className="learning-center-container view-transition">
@@ -39,11 +39,11 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlis
         {/* Sub Navigation Tabs */}
         <div className="learning-tab-nav">
           <button 
-            className={`learning-tab-btn ${activeSubTab === 'Assets' ? 'active' : ''}`}
-            onClick={() => setActiveSubTab('Assets')}
+            className={`learning-tab-btn ${activeSubTab === 'Learn' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('Learn')}
           >
             <BookOpen size={16} className="tab-icon-spacing" />
-            <span>Assets</span>
+            <span>Learn</span>
           </button>
           <button 
             className={`learning-tab-btn ${activeSubTab === 'Community' ? 'active' : ''}`}
@@ -61,7 +61,7 @@ export const LearningCenterView: React.FC<LearningCenterViewProps> = ({ watchlis
           </button>
         </div>
 
-        {activeSubTab === 'Assets' && (
+        {activeSubTab === 'Learn' && (
           <div className="learning-courses-grid">
             <div className="learning-course-card">
               <div className="course-image-placeholder">

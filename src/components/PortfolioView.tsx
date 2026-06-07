@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { 
   BarChart2, 
-  BookOpen, 
   Building2, 
   Wallet, 
   Headphones, 
@@ -39,7 +38,6 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
   // Sidebar navigation items
   const sidebarItems = [
     { id: 'Reports', label: 'Reports', icon: <BarChart2 size={18} /> },
-    { id: 'Learn', label: 'Learn', icon: <BookOpen size={18} /> },
     { id: 'Banks', label: 'Banks', icon: <Building2 size={18} /> },
     { id: 'Funds', label: 'Funds', icon: <Wallet size={18} /> },
     { id: 'Support', label: 'Customer support', icon: <Headphones size={18} /> },
@@ -324,26 +322,28 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
               </div>
 
               <div className="heatmap-grid-container">
-                <div className="heatmap-grid-wrapper">
-                  <div className="heatmap-grid">
-                    {heatmapData.map((week, wIdx) => (
-                      <div key={wIdx} className="heatmap-column-week">
-                        {week.map((intensity, dIdx) => (
-                          <div
-                            key={dIdx}
-                            className={`heatmap-day-square ${getHeatmapColorClass(intensity)}`}
-                            title={`Week ${wIdx + 1}, Day ${dIdx + 1}: ${intensity > 0 ? `${intensity} trades` : 'No trades'}`}
-                          />
-                        ))}
-                      </div>
+                <div className="heatmap-scroll-area">
+                  <div className="heatmap-month-labels">
+                    {months.map((m, idx) => (
+                      <span key={idx} className="month-label">{m}</span>
                     ))}
                   </div>
-                </div>
-                
-                <div className="heatmap-month-labels">
-                  {months.map((m, idx) => (
-                    <span key={idx} className="month-label">{m}</span>
-                  ))}
+                  
+                  <div className="heatmap-grid-wrapper">
+                    <div className="heatmap-grid">
+                      {heatmapData.map((week, wIdx) => (
+                        <div key={wIdx} className="heatmap-column-week">
+                          {week.map((intensity, dIdx) => (
+                            <div
+                              key={dIdx}
+                              className={`heatmap-day-square ${getHeatmapColorClass(intensity)}`}
+                              title={`Week ${wIdx + 1}, Day ${dIdx + 1}: ${intensity > 0 ? `${intensity} trades` : 'No trades'}`}
+                            />
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

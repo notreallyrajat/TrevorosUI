@@ -152,6 +152,79 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
+      {/* Portfolio Analytics */}
+      <div className="db-card db-charts-card">
+        <h2 className="db-card-heading">Portfolio Analytics</h2>
+        <div className="db-charts-grid">
+          {/* Pie Chart Section */}
+          <div className="db-chart-section">
+            <h3 className="db-chart-subheading">Asset Allocation</h3>
+            <div className="db-pie-container">
+              <div className="db-donut-chart" style={{
+                background: `conic-gradient(
+                  var(--primary) 0% 55%,
+                  var(--success) 55% 80%,
+                  var(--orange) 80% 92%,
+                  var(--purple) 92% 100%
+                )`
+              }}>
+                <div className="db-donut-center">
+                  <span className="db-donut-lbl">Total</span>
+                  <span className="db-donut-val">₹20M</span>
+                </div>
+              </div>
+              <div className="db-chart-legend">
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: 'var(--primary)' }}></span>
+                  <span className="legend-lbl">Equity (55%)</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: 'var(--success)' }}></span>
+                  <span className="legend-lbl">Mutual Funds (25%)</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: 'var(--orange)' }}></span>
+                  <span className="legend-lbl">Bonds (12%)</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: 'var(--purple)' }}></span>
+                  <span className="legend-lbl">Cash (8%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bar Chart Section */}
+          <div className="db-chart-section">
+            <h3 className="db-chart-subheading">Monthly Performance</h3>
+            <div className="db-bar-chart-container">
+              <div className="db-bar-graph">
+                {[
+                  { month: 'Jan', value: 45, profit: '+₹4.5L' },
+                  { month: 'Feb', value: 75, profit: '+₹7.5L' },
+                  { month: 'Mar', value: 35, profit: '+₹3.5L' },
+                  { month: 'Apr', value: 90, profit: '+₹9.0L' },
+                  { month: 'May', value: 60, profit: '+₹6.0L' },
+                  { month: 'Jun', value: 80, profit: '+₹8.0L' },
+                ].map((bar, i) => (
+                  <div key={i} className="db-bar-col">
+                    <div className="db-bar-track">
+                      <div 
+                        className="db-bar-fill" 
+                        style={{ height: `${bar.value}%`, background: 'linear-gradient(to top, var(--primary), var(--purple))' }}
+                      >
+                        <span className="db-bar-tooltip">{bar.profit}</span>
+                      </div>
+                    </div>
+                    <span className="db-bar-label">{bar.month}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Top Gainers */}
       <div className="db-card">
         <div className="db-movers-hdr">

@@ -262,9 +262,7 @@ function App() {
         <div className="header-left">
           <a href="#" className="logo-container">
             <span className="logo-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}>
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
+              <img src="/logo.png" alt="Trevoros Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </span>
             <span className="logo-text">Trevoros</span>
           </a>

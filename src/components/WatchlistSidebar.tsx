@@ -94,7 +94,7 @@ export const WatchlistSidebar: React.FC<WatchlistSidebarProps> = ({ watchlist, o
 
       {/* ── Watchlist header ── */}
       <div className="wl-section-header">
-        <span className="wl-section-label">Watchlist 1</span>
+        <span className="wl-section-label">Watchlist</span>
         <button className="wl-add-btn" onClick={onAddWatchlist}>+ Add new</button>
       </div>
 

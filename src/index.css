@@ -131,8 +131,8 @@ button, input, select {
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   color: var(--primary);
   display: flex;
   align-items: center;
@@ -1687,9 +1687,17 @@ button, input, select {
 .heatmap-grid-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   overflow-x: auto;
   padding-bottom: 8px;
+  width: 100%;
+}
+
+.heatmap-scroll-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: max-content;
+  margin: 0 auto;
 }
 
 .heatmap-grid-wrapper {
@@ -1740,7 +1748,8 @@ button, input, select {
   color: var(--text-secondary);
   font-weight: 600;
   padding: 0 4px;
-  min-width: 650px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .month-label {
@@ -4407,8 +4416,8 @@ button, input, select {
     padding: 0 10px;
   }
   .logo-icon {
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
   }
   .discipline-content-right,
   .learning-content-right,
@@ -4666,6 +4675,169 @@ button, input, select {
 .db-qp-lbl { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
 .db-qp-val { font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
 
+/* ── Dashboard Charts ── */
+.db-charts-card {
+  margin-bottom: 8px;
+}
+.db-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.db-chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.db-chart-subheading {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.db-pie-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 0;
+}
+.db-donut-chart {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease;
+}
+.db-donut-chart:hover {
+  transform: scale(1.03);
+}
+.db-donut-center {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  background-color: var(--bg-card);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.db-donut-lbl {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.db-donut-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.db-chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-lbl {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.db-bar-chart-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 140px;
+}
+.db-bar-graph {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+.db-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 14%;
+}
+.db-bar-track {
+  height: 90px;
+  width: 100%;
+  background-color: var(--bg-page);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: visible;
+  position: relative;
+}
+.db-bar-fill {
+  width: 100%;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+}
+.db-bar-fill:hover {
+  opacity: 0.85;
+}
+.db-bar-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background-color: var(--text-primary);
+  color: var(--bg-card);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  z-index: 10;
+}
+.db-bar-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--text-primary);
+}
+.db-bar-fill:hover .db-bar-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-2px);
+}
+.db-bar-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
 /* ── Movers ── */
 .db-movers-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .db-view-all { background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; transition: var(--transition); }
@@ -4777,6 +4949,9 @@ button, input, select {
   .db-qp-val  { font-size: 14px; }
   .db-card-heading { font-size: 15px; }
   .wl-stock-list { max-height: 180px; }
+  .db-charts-grid { grid-template-columns: 1fr; gap: 20px; }
+  .db-pie-container { flex-direction: column; align-items: center; gap: 16px; }
+  .db-chart-legend { align-items: flex-start; }
 }
 @media (max-width: 600px) {
   .db-right   { flex-direction: column; }
@@ -4834,6 +5009,34 @@ button, input, select {
   bottom: 0;
   border-left: none;
   border-radius: 0;
+  overflow-y: auto;
+}
+
+.scd-panel.maximized .scd-header,
+.scd-panel.maximized .scd-toast,
+.scd-panel.maximized .scd-panel-tabs,
+.scd-panel.maximized .scd-chart-panel,
+.scd-panel.maximized .oc-container,
+.scd-panel.maximized .scd-order-row {
+  max-width: 1100px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+  .scd-panel.maximized .scd-chart-panel {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 32px;
+    padding: 24px;
+    align-items: start;
+  }
+  .scd-panel.maximized .scd-about {
+    padding: 0;
+    margin-top: 40px; /* Aligns visually with the chart area */
+  }
 }
 
 @keyframes slideFromRight {
@@ -5072,6 +5275,8 @@ button, input, select {
   display: flex;
   gap: 10px;
   flex: 1;
+  max-width: 320px;
+  margin-left: auto;
 }
 
 .scd-btn {

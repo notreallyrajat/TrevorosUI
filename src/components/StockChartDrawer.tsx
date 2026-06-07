@@ -135,7 +135,7 @@ export const StockChartDrawer: React.FC<StockChartDrawerProps> = ({
                 key={stock.id}
                 stockName={stock.name}
                 theme={theme}
-                height={isMaximized ? 480 : 280}
+                height={isMaximized ? 350 : 260}
                 showVolume={true}
               />
             </div>
