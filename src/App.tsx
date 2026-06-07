@@ -24,6 +24,7 @@ import { PositionsView } from './components/PositionsView'
 import { AiView } from './components/AiView'
 import { ChallengeView } from './components/ChallengeView'
 import { AuthPage } from './components/AuthPage'
+import { LandingView } from './components/LandingView'
 
 // Mock Initial Data
 const initialWatchlist = [
@@ -55,6 +56,7 @@ function App() {
 
   // ── Auth state ──────────────────────────────────────────────
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [showAuth, setShowAuth] = useState(false)
   const [authUser, setAuthUser] = useState({ name: 'Marshall D.', email: 'marshall@trevoros.com' })
 
   const handleAuthenticated = (name: string, email: string) => {
@@ -64,8 +66,9 @@ function App() {
 
   const handleLogout = () => {
     setIsAuthenticated(false)
+    setShowAuth(false)
     setActiveTab('Dashboard')
-    window.location.hash = '#dashboard'
+    window.location.hash = '#'
   }
 
   const [portfolio] = useState({
@@ -145,7 +148,14 @@ function App() {
   // Hash routing
   useEffect(() => {
     const handleHash = () => {
-      const hash = (window.location.hash || '#dashboard').replace('#', '').toLowerCase()
+      const hash = (window.location.hash || '').replace('#', '').toLowerCase()
+      
+      if (hash === 'login' || hash === 'signup') {
+        setShowAuth(true)
+      } else {
+        setShowAuth(false)
+      }
+
       const found = NAV_TABS.find((t) => t.hash === hash)
       if (found) {
         setActiveTab(found.id)
@@ -255,8 +265,12 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* ── AUTH GATE ── */}
-      {!isAuthenticated && (
+      {/* ── LANDING & AUTH GATES ── */}
+      {!isAuthenticated && !showAuth && (
+        <LandingView onLoginClick={() => { window.location.hash = '#login' }} />
+      )}
+
+      {!isAuthenticated && showAuth && (
         <AuthPage onAuthenticated={handleAuthenticated} />
       )}
 

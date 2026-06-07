@@ -75,13 +75,20 @@ TrevorosUI/
 ├─ public/                     # static assets (favicon, index.html)
 ├─ src/
 │  ├─ components/             # React component library
+│  │   ├─ LandingView.tsx      # Main landing page view wrapper
+│  │   ├─ Starfield.tsx        # Nebula Starfield background canvas
+│  │   ├─ ChartMockup.tsx      # Interactive SVG 3D landing page chart
+│  │   ├─ FeaturesSection.tsx  # Landing page features carousel & how-it-works bubble web
+│  │   ├─ FaqSection.tsx       # Frequently Asked Questions accordion list
+│  │   ├─ TestimonialsSection.tsx # Infinite vertical testimonials loop track
 │  │   ├─ TradeView.tsx        # Trade view – watchlist, list, details
 │  │   ├─ PortfolioView.tsx    # Portfolio layout + sub‑tabs
 │  │   ├─ DisciplineReportView.tsx
 │  │   ├─ LearningCenterView.tsx
 │  │   └─ ... (shared UI utilities)
-│  ├─ index.css                # Global design system & responsive media queries
-│  ├─ App.tsx                  # Root component – state, header, routing, mobile nav
+│  ├─ index.css                # Global dashboard design system & responsive layout styles
+│  ├─ landing.css              # Scoped dark-themed landing page visual overrides
+│  ├─ App.tsx                  # Root component – state, routing, auth gates, mobile bottom nav
 │  ├─ main.tsx                 # Vite entry point (ReactDOM.createRoot)
 │  └─ utils/                  # Helper functions (e.g., mock data generators)
 ├─ vite.config.ts               # Vite configuration (React plugin)
@@ -282,6 +289,54 @@ If you need environment variables (e.g., API keys for future real‑time data), 
    * Write concise TypeScript interfaces for props.
    * Run `npm run lint` before committing.
 4. Submit a **Pull Request** with a clear description and screenshots (especially for responsive changes).
+
+---
+
+## Recent Migrations & UI Enhancements
+
+The landing page from `Treveros_Frontend_New` has been successfully integrated as the entry point of the TrevorosUI SPA. Below is a summary of the changes made:
+
+### 1. Landing Page Architecture & Theme Isolation
+* **Component Porting**: Migrated `LandingView.tsx`, `Starfield.tsx`, `ChartMockup.tsx`, `FeaturesSection.tsx`, `FaqSection.tsx`, and `TestimonialsSection.tsx` into the component directory.
+* **Theme Namespacing**: Styles are isolated using the `.landing-page-root` class in `src/landing.css`. The dashboard visual styles (`src/index.css`) remain unpolluted.
+* **Hero Section Refinement**: Replaced generic classes with namespace-scoped selectors (`.landing-hero-container`, `.landing-badge`, `.landing-title`, and `.landing-description`) to ensure the headline is centered and fully visible without overlapping with the sticky navigation header.
+
+### 2. UI Enhancements & Feature Additions
+* **TopBar Branding Logo**: The default text/placeholder logo has been replaced with the scaled-up logo from `LOGO.png.png`.
+* **TopBar Navigation Entries**: Added the responsive "Challenge" and "Behavioral Analytics" views/routes.
+* **Cleaned Up Duplicates**: Removed duplicate Learn redirects from the user profile settings page.
+* **Animated AI Showcase**: Replaced the static `"HOLD"` text block with a high-fidelity animated SVG constellation grid with orbiting nodes and rotating border lines.
+* **FAQ Section Refinement**: Updated the section title to `"Frequently Asked Questions"`.
+
+### 3. Mobile Responsiveness Improvements
+* **Owl Animation Removal**: Hid the Owl center graphics and connections on mobile viewports (`max-width: 768px`) to prevent layout shift.
+* **Flexible Grids**: Placed bubble cards into a single column layout on mobile screens.
+* **3D Scroll Disabling**: Bypassed 3D CSS rotation/transformations on `ChartMockup` for screens smaller than `768px` to ensure high-performance native scrolling.
+* **Spotlight Text Fallback**: Disabled cursor-based mask clipping on mobile screens, making the text fully visible and readable.
+
+---
+
+## Backend Integration Note for Developers
+
+The codebase is structured to make backend integration as modular and straightforward as possible. Here is a guide to the key integration points:
+
+### 1. Authentication & Route Guarding (`src/App.tsx`)
+* **State Hook Location**: The app uses `isAuthenticated` and `showAuth` states in `App.tsx`.
+* **Routing Guard**:
+  * If `!isAuthenticated && !showAuth`, the `LandingView` is rendered.
+  * If `!isAuthenticated && showAuth`, the `AuthPage` (sign-in/sign-up module) is rendered.
+  * If `isAuthenticated`, the main dashboard views are rendered.
+* **Where to Connect Backend**: Replace the simulated `handleAuthenticated` and `handleLogout` functions in `App.tsx` with actual sessions, JWT verification, or auth provider SDK calls (e.g., Supabase, Auth0, or custom Express endpoints).
+
+### 2. Custom Dashboard Views (`src/components/`)
+* **Challenges & Behavioral Analytics**: The routes for the new TopBar tabs render placeholders inside `App.tsx` or respective subcomponents. You can query challenge datasets and analytic metrics directly from a database API.
+* **Watchlist & Stock Data**:
+  * Initial stock database resides in `App.tsx` state (`watchlist`).
+  * Real-time integration: Connect WebSockets or server-sent events (SSE) in `App.tsx` / `TradeView.tsx` to feed live ticks instead of mock mathematical updates.
+
+### 3. Stylesheet Separation
+* **`src/index.css`**: Controls all authenticated dashboard pages, color variables, and components.
+* **`src/landing.css`**: Isolated specifically for the unauthenticated landing view. Keep these separate to prevent visual style bleeding.
 
 ---
 
