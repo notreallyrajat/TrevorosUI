@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Mail, Phone, ArrowLeft, CheckCircle } from 'lucide-react';
 
 // ── Demo credentials ──────────────────────────────────────────
 export const DEMO_EMAIL    = 'demo@trevoros.com';
@@ -111,9 +111,10 @@ const PasswordInput: React.FC<{
 interface LoginFormProps {
   onLogin: (name: string, email: string) => void;
   onGoSignup: () => void;
+  onGoForgot: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onGoSignup }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onGoSignup, onGoForgot }) => {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
@@ -173,7 +174,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onGoSignup }) => {
 
           <div className="auth-forgot-row">
             <button type="button" className="auth-link-btn"
-              onClick={() => alert('Password reset link sent to your email.')}>
+              onClick={onGoForgot}>
               Forgot password?
             </button>
           </div>
@@ -301,31 +302,385 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onGoLogin }) => {
   );
 };
 
+// ── FORGOT PASSWORD REQUEST FORM ──────────────────────────────
+interface ForgotRequestFormProps {
+  onGoLogin: () => void;
+  onSubmit: (method: 'email' | 'phone', value: string) => void;
+}
+
+const ForgotRequestForm: React.FC<ForgotRequestFormProps> = ({ onGoLogin, onSubmit }) => {
+  const [method, setMethod] = useState<'email' | 'phone'>('email');
+  const [value, setValue] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!value.trim()) {
+      setError(`Please enter your ${method === 'email' ? 'email address' : 'phone number'}.`);
+      return;
+    }
+
+    if (method === 'email' && !value.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (method === 'phone' && value.replace(/\D/g, '').length < 10) {
+      setError('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onSubmit(method, value.trim());
+    }, 800);
+  };
+
+  return (
+    <div className="auth-form-panel">
+      <div className="auth-form-inner">
+        <div className="auth-logo-row">
+          <span className="auth-logo-icon">
+            <img src="/logo.png" alt="Trevoros Logo" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+          </span>
+          <span className="auth-logo-name">Trevoros</span>
+        </div>
+
+        <h1 className="auth-title">Forgot Password</h1>
+        <p className="auth-desc">Choose a contact method and enter your details to receive an OTP.</p>
+
+        <div className="auth-tab-row">
+          <button
+            type="button"
+            className={`auth-tab-btn ${method === 'email' ? 'active' : ''}`}
+            onClick={() => { setMethod('email'); setValue(''); setError(''); }}
+          >
+            <Mail size={16} />
+            <span>Email</span>
+          </button>
+          <button
+            type="button"
+            className={`auth-tab-btn ${method === 'phone' ? 'active' : ''}`}
+            onClick={() => { setMethod('phone'); setValue(''); setError(''); }}
+          >
+            <Phone size={16} />
+            <span>Phone</span>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="auth-field">
+            <input
+              type={method === 'email' ? 'email' : 'tel'}
+              className="auth-input"
+              placeholder={method === 'email' ? 'mail@website.com' : '+91 99999 99999'}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Sending OTP…' : 'Send OTP'}
+          </button>
+        </form>
+
+        <p className="auth-switch-text">
+          <button type="button" className="auth-link-btn inline-flex items-center gap-1" onClick={onGoLogin}>
+            <ArrowLeft size={14} /> Back to Login
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ── OTP VERIFICATION FORM ─────────────────────────────────────
+interface ForgotOtpFormProps {
+  method: 'email' | 'phone';
+  contactValue: string;
+  onGoBack: () => void;
+  onVerify: () => void;
+}
+
+const ForgotOtpForm: React.FC<ForgotOtpFormProps> = ({ method, contactValue, onGoBack, onVerify }) => {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (code.length !== 6) {
+      setError('Please enter the 6-digit verification code.');
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      // Allow the demo OTP code 123456
+      if (code === '123456') {
+        onVerify();
+      } else {
+        setError('Incorrect code. Hint: Use 123456');
+      }
+    }, 800);
+  };
+
+  return (
+    <div className="auth-form-panel">
+      <div className="auth-form-inner">
+        <div className="auth-logo-row">
+          <span className="auth-logo-icon">
+            <img src="/logo.png" alt="Trevoros Logo" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+          </span>
+          <span className="auth-logo-name">Trevoros</span>
+        </div>
+
+        <h1 className="auth-title">Verify OTP</h1>
+        <p className="auth-desc">
+          We've sent a 6-digit verification code to your {method === 'email' ? 'email' : 'phone number'}:<br />
+          <strong>{contactValue}</strong>
+        </p>
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="auth-field">
+            <input
+              type="text"
+              maxLength={6}
+              className="auth-input text-center tracking-widest font-mono text-lg"
+              placeholder="000000"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+              required
+            />
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Verifying…' : 'Verify Code'}
+          </button>
+        </form>
+
+        <div className="auth-demo-hint">
+          <span className="auth-demo-label">Demo OTP Code</span>
+          <code className="auth-demo-code">123456</code>
+        </div>
+
+        <p className="auth-switch-text">
+          <button type="button" className="auth-link-btn inline-flex items-center gap-1" onClick={onGoBack}>
+            <ArrowLeft size={14} /> Back
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ── PASSWORD RESET FORM ───────────────────────────────────────
+interface ForgotResetFormProps {
+  onGoBack: () => void;
+  onResetSuccess: () => void;
+}
+
+const ForgotResetForm: React.FC<ForgotResetFormProps> = ({ onGoBack, onResetSuccess }) => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onResetSuccess();
+    }, 800);
+  };
+
+  return (
+    <div className="auth-form-panel">
+      <div className="auth-form-inner">
+        <div className="auth-logo-row">
+          <span className="auth-logo-icon">
+            <img src="/logo.png" alt="Trevoros Logo" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+          </span>
+          <span className="auth-logo-name">Trevoros</span>
+        </div>
+
+        <h1 className="auth-title">New Password</h1>
+        <p className="auth-desc">Set a strong, new password for your Trevoros account.</p>
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="auth-field">
+            <label className="auth-field-label" htmlFor="new-password">New Password</label>
+            <PasswordInput
+              id="new-password"
+              value={password}
+              placeholder="min 8 characters"
+              onChange={setPassword}
+            />
+          </div>
+
+          <div className="auth-field">
+            <label className="auth-field-label" htmlFor="confirm-password">Confirm Password</label>
+            <PasswordInput
+              id="confirm-password"
+              value={confirmPassword}
+              placeholder="repeat new password"
+              onChange={setConfirmPassword}
+            />
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="auth-submit-btn" disabled={loading}>
+            {loading ? 'Resetting…' : 'Reset Password'}
+          </button>
+        </form>
+
+        <p className="auth-switch-text">
+          <button type="button" className="auth-link-btn inline-flex items-center gap-1" onClick={onGoBack}>
+            <ArrowLeft size={14} /> Back
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ── SUCCESS CONFIRMATION FORM ─────────────────────────────────
+interface ForgotSuccessFormProps {
+  onGoLogin: () => void;
+}
+
+const ForgotSuccessForm: React.FC<ForgotSuccessFormProps> = ({ onGoLogin }) => {
+  return (
+    <div className="auth-form-panel">
+      <div className="auth-form-inner">
+        <div className="auth-logo-row">
+          <span className="auth-logo-icon">
+            <img src="/logo.png" alt="Trevoros Logo" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+          </span>
+          <span className="auth-logo-name">Trevoros</span>
+        </div>
+
+        <div className="auth-success-box">
+          <div className="auth-success-icon">
+            <CheckCircle size={56} />
+          </div>
+          <h1 className="auth-title" style={{ marginTop: 0, marginBottom: 8 }}>Password Reset!</h1>
+          <p className="auth-desc">
+            Your password has been successfully updated. You can now log in using your new credentials.
+          </p>
+
+          <button type="button" className="auth-submit-btn" onClick={onGoLogin}>
+            Go to Login
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ── AUTH PAGE (root) ──────────────────────────────────────────
 interface AuthPageProps {
   onAuthenticated: (name: string, email: string) => void;
 }
 
 export const AuthPage: React.FC<AuthPageProps> = ({ onAuthenticated }) => {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot_request' | 'forgot_otp' | 'forgot_reset' | 'forgot_success'>('login');
+  const [contactMethod, setContactMethod] = useState<'email' | 'phone'>('email');
+  const [contactValue, setContactValue] = useState('');
+
+  const handleRequestSubmit = (method: 'email' | 'phone', value: string) => {
+    setContactMethod(method);
+    setContactValue(value);
+    setMode('forgot_otp');
+  };
 
   return (
-    <div className={`auth-shell ${mode}`}>
-      {mode === 'login' ? (
+    <div className={`auth-shell ${mode.startsWith('forgot') ? 'login' : mode}`}>
+      {mode === 'login' && (
         <>
           <LoginForm
             onLogin={onAuthenticated}
             onGoSignup={() => setMode('signup')}
+            onGoForgot={() => setMode('forgot_request')}
           />
           <GridPanel variant="login" />
         </>
-      ) : (
+      )}
+
+      {mode === 'signup' && (
         <>
           <GridPanel variant="signup" />
           <SignupForm
             onSignup={onAuthenticated}
             onGoLogin={() => setMode('login')}
           />
+        </>
+      )}
+
+      {mode === 'forgot_request' && (
+        <>
+          <ForgotRequestForm
+            onGoLogin={() => setMode('login')}
+            onSubmit={handleRequestSubmit}
+          />
+          <GridPanel variant="login" />
+        </>
+      )}
+
+      {mode === 'forgot_otp' && (
+        <>
+          <ForgotOtpForm
+            method={contactMethod}
+            contactValue={contactValue}
+            onGoBack={() => setMode('forgot_request')}
+            onVerify={() => setMode('forgot_reset')}
+          />
+          <GridPanel variant="login" />
+        </>
+      )}
+
+      {mode === 'forgot_reset' && (
+        <>
+          <ForgotResetForm
+            onGoBack={() => setMode('forgot_otp')}
+            onResetSuccess={() => setMode('forgot_success')}
+          />
+          <GridPanel variant="login" />
+        </>
+      )}
+
+      {mode === 'forgot_success' && (
+        <>
+          <ForgotSuccessForm
+            onGoLogin={() => setMode('login')}
+          />
+          <GridPanel variant="login" />
         </>
       )}
     </div>
