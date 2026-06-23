@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, HelpCircle } from 'lucide-react';
+import { Send, Bot, User, HelpCircle } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -77,14 +77,13 @@ export const AiView: React.FC = () => {
       <aside className="ai-sidebar">
         <div className="ai-sidebar-card">
           <div className="ai-title-row">
-            <Sparkles size={18} className="ai-icon-sparkle" />
             <h3>AI Capabilities</h3>
           </div>
           <ul className="ai-capabilities-list">
-            <li>📈 Real-time Market Analysis</li>
-            <li>💼 Portfolio Risk Audits</li>
-            <li>⚡ Smart Watchlist Breakouts</li>
-            <li>🔍 Stock valuation models</li>
+            <li>Real-time Market Analysis</li>
+            <li>Portfolio Risk Audits</li>
+            <li>Smart Watchlist Breakouts</li>
+            <li>Stock valuation models</li>
           </ul>
         </div>
 

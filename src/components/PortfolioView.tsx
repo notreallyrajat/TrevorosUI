@@ -11,7 +11,11 @@ import {
   ChevronDown,
   Activity,
   User,
-  Info
+  Info,
+  Wallet,
+  TrendingUp,
+  Briefcase,
+  HelpCircle
 } from 'lucide-react';
 
 interface PortfolioData {
@@ -20,6 +24,10 @@ interface PortfolioData {
   totalLoss: number;
   netPL: number;
   overallReturns: number;
+  walletValue?: number;
+  realizedPL?: number;
+  unrealizedPL?: number;
+  totalValue?: number;
 }
 
 interface PortfolioViewProps {
@@ -36,6 +44,21 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
   setActiveSubTab
 }) => {
   const selectedYear = '2026';
+
+  // Destructure or fallback to default values for premium fintech look
+  const investedValue = portfolioData.totalInvestment;
+  const walletValue = portfolioData.walletValue ?? 4850000;
+  const realizedPL = portfolioData.realizedPL ?? 45000;
+  const unrealizedPL = portfolioData.unrealizedPL ?? -15000;
+  
+  // Current Value of holdings = Invested Value + Unrealized P&L
+  const currentHoldingsValue = investedValue + unrealizedPL;
+  
+  // Total Account Value = Current Value of holdings + Wallet Value
+  const totalAccountValue = portfolioData.totalValue ?? (currentHoldingsValue + walletValue);
+  
+  // P&L percentages
+  const unrealizedPLPct = investedValue > 0 ? (unrealizedPL / investedValue) * 100 : 0;
 
   // Sidebar navigation items
   const sidebarItems = [
@@ -182,6 +205,95 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({
       <section className="portfolio-content-right">
         {activeSubTab === 'Reports' && (
           <>
+            {/* Fintech Portfolio Summary Cards */}
+            <div className="portfolio-metrics-row">
+              {/* Invested Value Card */}
+              <div className="portfolio-metric-card glass-card">
+                <div className="metric-header">
+                  <div className="metric-icon-wrapper invested-icon">
+                    <Briefcase size={18} />
+                  </div>
+                  <span className="metric-title">Invested Value</span>
+                  <div className="metric-tooltip" title="The total capital deployed in active holdings.">
+                    <HelpCircle size={14} className="metric-help-icon" />
+                  </div>
+                </div>
+                <div className="metric-body">
+                  <h3 className="metric-value">₹ {investedValue.toLocaleString('en-IN')}</h3>
+                  <div className="metric-footer">
+                    <span className="metric-subtext">Current value: ₹ {currentHoldingsValue.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Wallet Value Card */}
+              <div className="portfolio-metric-card glass-card">
+                <div className="metric-header">
+                  <div className="metric-icon-wrapper wallet-icon">
+                    <Wallet size={18} />
+                  </div>
+                  <span className="metric-title">Wallet Balance</span>
+                  <div className="metric-tooltip" title="Available cash balance to place new orders.">
+                    <HelpCircle size={14} className="metric-help-icon" />
+                  </div>
+                </div>
+                <div className="metric-body">
+                  <h3 className="metric-value">₹ {walletValue.toLocaleString('en-IN')}</h3>
+                  <div className="metric-actions">
+                    <button className="metric-action-btn deposit" onClick={() => alert('Deposit funds feature triggered!')}>Add Funds</button>
+                    <button className="metric-action-btn withdraw" onClick={() => alert('Withdraw funds feature triggered!')}>Withdraw</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Value Card */}
+              <div className="portfolio-metric-card glass-card total-value-card">
+                <div className="metric-header">
+                  <div className="metric-icon-wrapper total-icon">
+                    <TrendingUp size={18} />
+                  </div>
+                  <span className="metric-title">Total Value</span>
+                  <div className="metric-tooltip" title="Total net worth (Current Holdings Value + Wallet Balance).">
+                    <HelpCircle size={14} className="metric-help-icon" />
+                  </div>
+                </div>
+                <div className="metric-body">
+                  <h3 className="metric-value">₹ {totalAccountValue.toLocaleString('en-IN')}</h3>
+                  <div className="metric-footer">
+                    <span className="metric-subtext">Net account valuation</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* P&L Summary Cards */}
+            <div className="portfolio-pnl-row">
+              <div className="portfolio-dashboard-card pnl-card">
+                <div className="pnl-header">
+                  <span className="pnl-title">Realized P&L</span>
+                  <span className="pnl-desc">Booked profits/losses</span>
+                </div>
+                <div className="pnl-body">
+                  <span className={`pnl-value ${realizedPL >= 0 ? 'pnl-positive' : 'pnl-negative'}`}>
+                    {realizedPL >= 0 ? '▲' : '▼'} ₹ {Math.abs(realizedPL).toLocaleString('en-IN')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="portfolio-dashboard-card pnl-card">
+                <div className="pnl-header">
+                  <span className="pnl-title">Unrealized P&L</span>
+                  <span className="pnl-desc">Current holdings open positions</span>
+                </div>
+                <div className="pnl-body">
+                  <span className={`pnl-value ${unrealizedPL >= 0 ? 'pnl-positive' : 'pnl-negative'}`}>
+                    {unrealizedPL >= 0 ? '▲' : '▼'} ₹ {Math.abs(unrealizedPL).toLocaleString('en-IN')}
+                    <span className="pnl-percentage"> ({unrealizedPLPct >= 0 ? '+' : ''}{unrealizedPLPct.toFixed(2)}%)</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* TOP ROW GRID */}
             <div className="portfolio-top-grid">
               {/* Total Invested Card */}

@@ -35,6 +35,20 @@ const initialWatchlist = [
   { id: '5', name: 'ONGC', type: 'STOCK', price: 298.30, change: 1.80, pct: 0.61, up: true },
 ]
 
+const initialIndices = [
+  { symbol: 'NIFTY 50', price: 23659.00, change: 41.00, pct: 0.17, up: true },
+  { symbol: 'SENSEX', price: 77301.14, change: 141.25, pct: 0.18, up: true },
+  { symbol: 'NIFTY BANK', price: 51658.90, change: -120.45, pct: -0.23, up: false },
+  { symbol: 'NIFTY IT', price: 35090.20, change: 180.10, pct: 0.51, up: true },
+  { symbol: 'BSE SMALLCAP', price: 52120.35, change: -45.15, pct: -0.09, up: false },
+  { symbol: 'BSE MIDCAP', price: 46180.50, change: 95.80, pct: 0.21, up: true },
+  { symbol: 'RELIANCE', price: 2910.45, change: 12.30, pct: 0.42, up: true },
+  { symbol: 'TCS', price: 3820.15, change: -24.50, pct: -0.64, up: false },
+  { symbol: 'HDFC BANK', price: 1675.20, change: 4.80, pct: 0.29, up: true },
+  { symbol: 'ICICI BANK', price: 1120.50, change: -8.15, pct: -0.72, up: false },
+  { symbol: 'INFY', price: 1530.80, change: 11.20, pct: 0.74, up: true }
+]
+
 // Nav tabs config — Trade removed; chart opens from watchlist click
 const NAV_TABS = [
   { id: 'Dashboard',  label: 'Dashboard',  hash: 'dashboard'  },
@@ -47,6 +61,7 @@ const NAV_TABS = [
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [watchlist, setWatchlist] = useState(initialWatchlist)
+  const [indices, setIndices] = useState(initialIndices)
   const [activeTab, setActiveTab] = useState('Dashboard')
   const [portfolioSubTab, setPortfolioSubTab] = useState('Reports')
   const [isAddWatchlistOpen, setIsAddWatchlistOpen] = useState(false)
@@ -76,6 +91,10 @@ function App() {
     todayPLPct: 3.24,
     topHolding: 'XYZ',
     totalInvestment: 20000000,
+    walletValue: 4850000,
+    realizedPL: 45000,
+    unrealizedPL: -15000,
+    totalValue: 24835000,
     totalProfit: 40000,
     totalLoss: 10000,
     netPL: 30000,
@@ -213,6 +232,33 @@ function App() {
       })
     }, 3500)
     return () => clearInterval(priceInterval)
+  }, [])
+
+  // Live indices price simulation
+  useEffect(() => {
+    const indicesInterval = setInterval(() => {
+      setIndices((prev) => {
+        const randomIndex = Math.floor(Math.random() * prev.length)
+        return prev.map((item, idx) => {
+          if (idx === randomIndex) {
+            const isUp = Math.random() > 0.48
+            const percentChange = (Math.random() * 0.12) * (isUp ? 1 : -1)
+            const oldPrice = item.price
+            const newPrice = Number((oldPrice * (1 + percentChange / 100)).toFixed(2))
+            const delta = Number((newPrice - oldPrice).toFixed(2))
+            return {
+              ...item,
+              price: newPrice,
+              change: Number((item.change + delta).toFixed(2)),
+              pct: Number((item.pct + percentChange).toFixed(2)),
+              up: item.pct + percentChange >= 0
+            }
+          }
+          return item
+        })
+      })
+    }, 2500)
+    return () => clearInterval(indicesInterval)
   }, [])
 
   const toggleTheme = () => {
@@ -398,6 +444,31 @@ function App() {
         </div>
       </header>
 
+      {/* TOP MARQUEE TICKER */}
+      <div className="top-marquee-container">
+        <div className="top-marquee-wrapper">
+          {indices.map((item, idx) => (
+            <span key={idx} className="top-marquee-item">
+              <span className="top-marquee-name">{item.symbol}</span>
+              <span className="top-marquee-price">₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+              <span className={`top-marquee-change ${item.up ? 'color-up' : 'color-down'}`}>
+                {item.up ? '▲' : '▼'} {Math.abs(item.change).toFixed(2)} ({item.pct.toFixed(2)}%)
+              </span>
+            </span>
+          ))}
+          {/* Duplicate list to ensure seamless transition loop */}
+          {indices.map((item, idx) => (
+            <span key={`dup-${idx}`} className="top-marquee-item">
+              <span className="top-marquee-name">{item.symbol}</span>
+              <span className="top-marquee-price">₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+              <span className={`top-marquee-change ${item.up ? 'color-up' : 'color-down'}`}>
+                {item.up ? '▲' : '▼'} {Math.abs(item.change).toFixed(2)} ({item.pct.toFixed(2)}%)
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* VIEWS */}
       {activeTab === 'Dashboard' && (
         <DashboardView
@@ -412,6 +483,18 @@ function App() {
             overallReturns: portfolio.overallReturns,
           }}
           onNavigate={(tab) => { window.location.hash = `#${tab.toLowerCase()}` }}
+          onAddStockDirect={(newStock) => {
+            setWatchlist((prev) => {
+              const isAlreadyAdded = prev.some(
+                (item) => item.name === newStock.name && item.type.toUpperCase() === newStock.type.toUpperCase()
+              );
+              if (isAlreadyAdded) {
+                alert(`${newStock.name} (${newStock.type}) is already in your watchlist.`);
+                return prev;
+              }
+              return [...prev, { ...newStock, id: Date.now().toString() }];
+            });
+          }}
         />
       )}
       {activeTab === 'Discipline' && (

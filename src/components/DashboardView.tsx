@@ -26,6 +26,7 @@ interface DashboardViewProps {
   onStockClick?: (stock: StockItem) => void;
   portfolioData: PortfolioData;
   onNavigate?: (tab: string) => void;
+  onAddStockDirect?: (stock: Omit<StockItem, 'id'>) => void;
 }
 
 // ── Static movers data (matches screenshot exactly) ───────────
@@ -115,12 +116,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onStockClick,
   portfolioData,
   onNavigate,
+  onAddStockDirect,
 }) => (
   <div className="db-shell view-transition">
 
     {/* LEFT SIDEBAR */}
     <aside className="db-sidebar">
-      <WatchlistSidebar watchlist={watchlist} onAddWatchlist={onAddWatchlist} onStockClick={onStockClick} />
+      <WatchlistSidebar 
+        watchlist={watchlist} 
+        onAddWatchlist={onAddWatchlist} 
+        onStockClick={onStockClick} 
+        onAddStockDirect={onAddStockDirect}
+      />
     </aside>
 
     {/* CENTER */}
@@ -156,43 +163,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="db-card db-charts-card">
         <h2 className="db-card-heading">Portfolio Analytics</h2>
         <div className="db-charts-grid">
-          {/* Pie Chart Section */}
-          <div className="db-chart-section">
-            <h3 className="db-chart-subheading">Asset Allocation</h3>
-            <div className="db-pie-container">
-              <div className="db-donut-chart" style={{
-                background: `conic-gradient(
-                  var(--primary) 0% 55%,
-                  var(--success) 55% 80%,
-                  var(--orange) 80% 92%,
-                  var(--purple) 92% 100%
-                )`
-              }}>
-                <div className="db-donut-center">
-                  <span className="db-donut-lbl">Total</span>
-                  <span className="db-donut-val">₹20M</span>
-                </div>
-              </div>
-              <div className="db-chart-legend">
-                <div className="legend-item">
-                  <span className="legend-color" style={{ backgroundColor: 'var(--primary)' }}></span>
-                  <span className="legend-lbl">Equity (55%)</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-color" style={{ backgroundColor: 'var(--success)' }}></span>
-                  <span className="legend-lbl">Mutual Funds (25%)</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-color" style={{ backgroundColor: 'var(--orange)' }}></span>
-                  <span className="legend-lbl">Bonds (12%)</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-color" style={{ backgroundColor: 'var(--purple)' }}></span>
-                  <span className="legend-lbl">Cash (8%)</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Bar Chart Section */}
           <div className="db-chart-section">
